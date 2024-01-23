@@ -1,4 +1,5 @@
 import { Circle } from './circle.js';
+import { Ciclerender } from './circlerender.js';
 import { Rectangle } from './rectangle.js';
 import { Renderer } from './renderer.js';
 
