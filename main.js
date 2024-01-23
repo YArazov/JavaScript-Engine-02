@@ -1,5 +1,4 @@
 import { Circle } from './circle.js';
-import { Ciclerender } from './circlerender.js';
 import { Rectangle } from './rectangle.js';
 import { Renderer } from './renderer.js';
 
@@ -12,9 +11,14 @@ const renderer = new Renderer(canv, ctx);   //object from imported class Rendere
 //Main Loop
 function updateAndDraw() {
     //make objects
-    const rectangle = new Rectangle({ x: 50, y: 60 }, 400, 200);
+    const circle = new Circle({ x: 200, y: 400 }, 10);
+    //draw objects
+
+    //make objects
+    const rectangle = new Rectangle({ x: 80, y: 60 }, 300, 150);
     //draw objects
     renderer.clearFrame();
+    renderer.drawCircle(circle, "black");
     renderer.drawRectangle(rectangle, "red", "black");
 }
 let renderInterval = setInterval(updateAndDraw, 1000 / 60);

@@ -14,6 +14,18 @@ export class Renderer {
         this.ctx.imageSmoothingEnabled = false; //turns off image smoothing so image isnt blury
     }
 
+    drawCircle(circle, strokeColor, fillColor){
+        this.ctx.beginPath();
+        this.ctx.arc(circle.position.x, circle.position.y, circle.radius, 0, Math.PI*2, true);
+        if (fillColor) {
+            this.ctx.fillStyle = fillColor;
+            this.ctx.fill();    //ctx colors the background of the circle
+        }
+        this.ctx.strokeStyle = strokeColor;
+        this.ctx.lineWidth = 3;
+        this.ctx.stroke();  //ctx draws the border of the circle
+    }
+
     drawRectangle(rectangle, strokeColor, fillColor) {
 
         // Fill the rectangle
