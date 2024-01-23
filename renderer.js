@@ -7,7 +7,7 @@ export class Renderer {
     // method makes outline and image equal and clear
     adjustCanvasForDPI() {
         const dpr = window.devicePixelRatio || 1; //sees if more than one pixel per pixel, if not default to 1
-        const rect = this.canvas.getBoundingClientRect(); //gices size of canvas on page
+        const rect = this.canvas.getBoundingClientRect(); //gets size of canvas on page
         this.canvas.width = rect.width * dpr; // make canvas bigger if screen has higher resolution
         this.canvas.height = rect.height * dpr; //make canvas bigger if screen has higher resolution
         this.ctx.scale(dpr, dpr); //makes canvas size the one you set
