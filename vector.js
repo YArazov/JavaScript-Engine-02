@@ -1,12 +1,12 @@
 export class Vec {
-    
+
     constructor(x, y) {
         this.x = x;
         this.y = y;
     }
 
     //chainable methods 
-    
+
     copy(v) {   //make this vector have the same value (coords) as another vector
         this.x = v.x;
         this.y = this.y;
@@ -15,12 +15,12 @@ export class Vec {
 
     add(v) {    //add v's and y to this vector;s x y and return the newest vector
         this.x += v.x; //operators
-        this.y += v.y; 
+        this.y += v.y;
         return this;    //used for chaining methods
-    } 
+    }
 
     subtract(v) {
-        this.x -=v.x;
+        this.x -= v.x;
         this.y -= v.y;
         return this;
     }
