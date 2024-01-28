@@ -43,6 +43,6 @@ export class Vec {
     }
 
     magnitude() {      //find magnitude (the length of vector)
-        return Math.swrt((this.x * this.x) + (this.y * this.y));
+        return Math.sqrt((this.x * this.x) + (this.y * this.y));
     }
 }

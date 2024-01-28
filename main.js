@@ -4,12 +4,17 @@ import { Rectangle } from './rectangle.js';
 import { Renderer } from './renderer.js';
 import { Vec } from './vector.js';
 
+const SMALLEST_RADIUS = 10;
+
 const canv = document.getElementById("canvas"); //find canvas elements on  webpage reference html doc, element name is one of the things in html, in this case canvas
 const ctx = canv.getContext("2d");  //used for drawing shapes on canvas, ctx has all the methods for drawing
+const fillColor = "darkGray";
+const bordCol = "black";
 
-const input = new Input(canv, window);
-input.resizeCanvas();
-input.addListeners();
+
+const inp = new Input(canv, window);
+inp.resizeCanvas();
+inp.addListeners();
 
 
 const renderer = new Renderer(canv, ctx);   //object from imported class Renderer
@@ -35,7 +40,7 @@ function updateAndDraw() {
 
     //draw objects
     renderer.clearFrame();  //first clear
-    renderer.drawFrame(objects, fillCol, bordCol);
+    renderer.drawFrame(objects, fillColor, bordCol);
     //draw shape
     if (shapeBeingMade) {
         renderer.drawCircle(shapeBeingMade, bordCol, null);

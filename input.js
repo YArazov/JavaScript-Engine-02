@@ -1,4 +1,4 @@
-import { Vec } from "./vector";
+import { Vec } from './vector.js';
 
 export class Input {
 
@@ -8,12 +8,12 @@ export class Input {
 
         this.inputs = {
             mouse: {
-                position: new Vec(0, 0)
+                position: new Vec(0, 0) //from vector class to create 
             },
             lclick: false,
             rclick: false
         };
-        
+
         //function binding: https://www.geeksforgeeks.org/javascript-function-binding/
         this.mouseDown = this.mouseDown.bind(this); //fix the meaning of the key word "this" so that it always refers to the Inputs
         this.mouseUp = this.mouseUp.bind(this); //without biding we get error "Undefined"
@@ -22,43 +22,43 @@ export class Input {
         this.resizeCanvas = this.resizeCanvas.bind(this);
     }
 
-addListeners() {
-    this.canv.addEventListener("mousedown", this.mouseDown);    //listens for clicking a mouse button
-    this.canv.addEventListener("mouseup", this.mouseUp);    //listens for releasing the mouse button
-    this.canv.addEventListener('contextmenu', this.onContextMenu);  //right click gives us context menu
-    this.canv.addEventListener('mousemove', this.mouseMove);    //listens for movement of the mouse cursor and stores the coordinates
-    this.window.addEventListener('resize', this.resizeCanvas, false); //changes size of canvas, like how you re-adjust the window size on computer, but just for the canvas
-}
-
-mouseDown(e) {
-    if (e.button == 0) {  //0 value means the left button was clicked
-        this.inputs.lclick = true;
-    } else if (e.button == 2) {   //2 value means right click
-        this.inputs.rclick = true;
+    addListeners() {
+        this.canv.addEventListener("mousedown", this.mouseDown);    //listens for clicking a mouse button
+        this.canv.addEventListener("mouseup", this.mouseUp);    //listens for releasing the mouse button
+        this.canv.addEventListener('contextmenu', this.onContextMenu);  //right click gives us context menu
+        this.canv.addEventListener('mousemove', this.mouseMove);    //listens for movement of the mouse cursor and stores the coordinates
+        this.window.addEventListener('resize', this.resizeCanvas, false); //changes size of canvas, like how you re-adjust the window size on computer, but just for the canvas
     }
-}
 
-mouseUp(e) {
-    if (e.button == 0) {
-        this.inputs.lclick = false;
-    } else if (e.button == 2) {
-        this.inputs.rclick = false;
+    mouseDown(e) {
+        if (e.button == 0) {  //0 value means the left button was clicked
+            this.inputs.lclick = true;
+        } else if (e.button == 2) {   //2 value means right click
+            this.inputs.rclick = true;
+        }
     }
-}
 
-onContextMenu(e) {
-    e.preventDefault();
-}
+    mouseUp(e) {
+        if (e.button == 0) {
+            this.inputs.lclick = false;
+        } else if (e.button == 2) {
+            this.inputs.rclick = false;
+        }
+    }
 
-mouseMove(e) {
-    const x = e.pageX - this.canv.offsetLeft;
-    const y = e.pageY - this.canv.offsetTop;
-    this.inputs.mouse.position.x = x;
-    this.inputs.mouse.position.y = y;
-}
+    onContextMenu(e) {
+        e.preventDefault();
+    }
 
-resizeCanvas() {
-    this.canv.width = this.window.innerWidth;
-    this.canv.height = this.window.innerHeight;
-}
+    mouseMove(e) {
+        const x = e.pageX - this.canv.offsetLeft;
+        const y = e.pageY - this.canv.offsetTop;
+        this.inputs.mouse.position.x = x;
+        this.inputs.mouse.position.y = y;
+    }
+
+    resizeCanvas() {
+        this.canv.width = this.window.innerWidth;
+        this.canv.height = this.window.innerHeight;
+    }
 }
