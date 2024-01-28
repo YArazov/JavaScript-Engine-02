@@ -7,18 +7,15 @@ const canv = document.getElementById("canvas"); //find canvas elements on  webpa
 const ctx = canv.getContext("2d");  //used for drawing shapes on canvas, ctx has all the methods for drawing
 
 const renderer = new Renderer(canv, ctx);   //object from imported class Renderer
+const objects = [];
 
 //Main Loop
 function updateAndDraw() {
     //make objects
-    const circle = new Circle({ x: 200, y: 400 }, 10);
+    const circle = new Circle({x: 50, y: 60}, 10);
     //draw objects
-
-    //make objects
-    const rectangle = new Rectangle({ x: 80, y: 60 }, 300, 150);
-    //draw objects
-    renderer.clearFrame();
+    renderer.clearFrame();  //first clear
     renderer.drawCircle(circle, "black");
-    renderer.drawRectangle(rectangle, "red", "black");
+    renderer.drawRect({position: {x: 50, y: 60}, width: 50, height: 20});
 }
 let renderInterval = setInterval(updateAndDraw, 1000 / 60);
