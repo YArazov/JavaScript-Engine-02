@@ -1,19 +1,51 @@
 export class Renderer {
-    constructor (canv, ctx) {
+    constructor(canv, ctx) {
         this.canvas = canv;
         this.ctx = ctx;
+        this.adjustCanvasForDPI();
+    }
+    // method makes outline and image equal and clear
+    adjustCanvasForDPI() {
+        const dpr = window.devicePixelRatio || 1; //sees if more than one pixel per pixel, if not default to 1
+        const rect = this.canvas.getBoundingClientRect(); //gets size of canvas on page
+        this.canvas.width = rect.width * dpr; // make canvas bigger if screen has higher resolution
+        this.canvas.height = rect.height * dpr; //make canvas bigger if screen has higher resolution
+        this.ctx.scale(dpr, dpr); //makes canvas size the one you set
+        this.ctx.imageSmoothingEnabled = false; //turns off image smoothing so image isnt blury
     }
 
-    drawCircle(circle, strokeColor, fillColor) {
+    drawCircle(circle, strokeColor, fillColor){
         this.ctx.beginPath();
         this.ctx.arc(circle.position.x, circle.position.y, circle.radius, 0, Math.PI*2, true);
         if (fillColor) {
             this.ctx.fillStyle = fillColor;
-            this.ctx.fill(); //ctx colors the backround of the circle
+            this.ctx.fill();    //ctx colors the background of the circle
         }
         this.ctx.strokeStyle = strokeColor;
         this.ctx.lineWidth = 3;
-        this.ctx.stroke(); //ctx draws the border of the cirfle
+        this.ctx.stroke();  //ctx draws the border of the circle
+    }
+
+    drawRectangle(rectangle, strokeColor, fillColor) {
+
+        // Fill the rectangle
+        this.ctx.fillStyle = fillColor;
+        this.ctx.fillRect(
+            rectangle.position.x,
+            rectangle.position.y,
+            rectangle.width,
+            rectangle.height
+        ); // Filling rectangle 
+
+        // Stroke the rectangle, adjust position and dimensions to account for the stroke width
+        this.ctx.strokeStyle = strokeColor;
+        this.ctx.lineWidth = 3; // Set outline width 
+        this.ctx.strokeRect(
+            rectangle.position.x,
+            rectangle.position.y,
+            rectangle.width,
+            rectangle.height
+        ); // Drawing rectangle outline
     }
 
     clearFrame() {
