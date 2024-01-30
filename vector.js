@@ -9,7 +9,7 @@ export class Vec {
 
     copy(v) {   //make this vector have the same value (coords) as another vector
         this.x = v.x;
-        this.y = this.y;
+        this.y = v.y;
         return this;
     }
 
