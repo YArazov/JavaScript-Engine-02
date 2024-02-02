@@ -19,9 +19,11 @@ export class Vec {
         return this;    //used for chaining methods
     }
 
-    subtract(v) {
-        this.x -= v.x;
-        this.y -= v.y;
+    divide(s) { // updated divide to handle cases of dividing by 0
+        if (s !== 0) {
+            this.x /= s;
+            this.y /= s;
+        }
         return this;
     }
 
@@ -36,6 +38,14 @@ export class Vec {
         this.y /= s;
         return this;
     }
+
+    // Method to calculate the distance between this vector and another vector
+    distance(v) {
+        const dx = this.x - v.x;
+        const dy = this.y - v.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
 
     //non-chainable methods
     clone() {   //create a new  vector with same coords

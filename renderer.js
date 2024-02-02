@@ -1,3 +1,6 @@
+import { Circle } from "./circle.js";
+import { Rectangle } from "./rectangle.js";
+
 export class Renderer {
     constructor(canv, ctx) {
         this.canvas = canv;
@@ -14,46 +17,12 @@ export class Renderer {
         this.ctx.imageSmoothingEnabled = false; //turns off image smoothing so image isnt blury
     }
 
-    drawCircle(circle, strokeColor, fillColor) {
-        this.ctx.beginPath();
-        this.ctx.arc(circle.position.x, circle.position.y, circle.radius, 0, Math.PI * 2, true);
-        if (fillColor) {
-            this.ctx.fillStyle = fillColor;
-            this.ctx.fill();    //ctx colors the background of the circle
-        }
-        this.ctx.strokeStyle = strokeColor;
-        this.ctx.lineWidth = 3;
-        this.ctx.stroke();  //ctx draws the border of the circle
+    drawShape(shape) {
+        shape.draw(this.ctx); // Directly call draw method of the shape
     }
 
-    drawRect(rect, strokeColor, fillColor) {
-        this.ctx.save();
-        this.ctx.translate(rect.position.x, rect.position.y);
-        if (fillColor) {
-            this.ctx.fillStyle = fillColor;
-            this.ctx.fillRect(
-                - rect.width / 2, // (-) is a negative symbol, so negative rect.width 
-                - rect.height / 2,
-                rect.width,
-                rect.height,
-            );
-        }
-        this.ctx.strokeStyle = strokeColor;
-        this.ctx.lineWidth = 3;
-        this.ctx.strokeRect(
-            - rect.width / 2, // these on fill and stroke are half the width and height to the top and left, so it centers on origin since it is half its l and w from origin
-            - rect.height / 2,
-            rect.width,
-            rect.height,
-        );
-        this.ctx.restore();
-    }
-
-    drawFrame(objects, fillCol, bordCol) {
-        for (let i = 0; i < objects.length; i++) {
-            this.drawCircle(objects[i], bordCol, fillCol);
-        }
-
+    drawFrame(objects) {
+        objects.forEach(object => this.drawShape(object));
     }
 
     clearFrame() {
