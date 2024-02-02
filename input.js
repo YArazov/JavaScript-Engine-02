@@ -57,8 +57,12 @@ export class Input {
         this.inputs.mouse.position.y = y;
     }
 
+    //debouncing (limiting time between actions, 100 milliseconds minimum between when something can happen)
     resizeCanvas() {
-        this.canv.width = this.window.innerWidth;
-        this.canv.height = this.window.innerHeight;
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(() => {
+            this.canv.width = this.window.innerWidth;
+            this.canv.height = this.window.innerHeight;
+        }, 100); // Adjust delay as needed
     }
 }

@@ -1,49 +1,71 @@
-import { Circle } from './circle.js';
 import { Input } from './input.js';
+import { Circle } from './circle.js';
 import { Rectangle } from './rectangle.js';
 import { Renderer } from './renderer.js';
+import { Shape } from './shape.js'; // If needed for reference
+import { Style } from './style.js';
 import { Vec } from './vector.js';
 
-const SMALLEST_RADIUS = 10;
+let currentShapeType = 'circle'; // Dynamically change this to add more shapes
 
-const canv = document.getElementById("canvas"); //find canvas elements on  webpage reference html doc, element name is one of the things in html, in this case canvas
-const ctx = canv.getContext("2d");  //used for drawing shapes on canvas, ctx has all the methods for drawing
-const fillColor = "darkGray";
-const bordCol = "black";
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('shapeToggle').addEventListener('click', toggleShape);
+});
 
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const input = new Input(canvas, window);
+input.addListeners();
+const renderer = new Renderer(canvas, ctx);
 
-const inp = new Input(canv, window);
-inp.resizeCanvas();
-inp.addListeners();
-
-
-const renderer = new Renderer(canv, ctx);   //object from imported class Renderer
-const objects = [];
+let objects = [];
 let shapeBeingMade = null;
 
-//MAIN LOOP
-function updateAndDraw() {
-    //make objects
-    if (inp.inputs.lclick && shapeBeingMade == null) {  //make circle
-        shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, 0);
-    }
-    if (inp.inputs.lclick && shapeBeingMade) {  //resize circle
-        const selectedRadius = shapeBeingMade.position.clone().subtract(inp.inputs.mouse.position).magnitude();
-        shapeBeingMade.radius = selectedRadius < SMALLEST_RADIUS ? shapeBeingMade.radius : selectedRadius;
-    }
+function toggleShape() {
+    // Extend this toggle logic for more shapes
+    currentShapeType = currentShapeType === 'circle' ? 'rectangle' : 'circle';
+}
 
-    //add objects
-    if (shapeBeingMade && !inp.inputs.lclick) { //store ready circle after releasing left click
-        objects.push(shapeBeingMade);   //push means add object to array
+function createShape(startPos) {
+    // Example style - you might make this dynamic or user-configurable
+    const defaultStyle = new Style('cyan', 'grey', 3);
+
+    switch (currentShapeType) {
+        case 'circle':
+            return new Circle(startPos, 0, defaultStyle); // Assuming Circle takes startPos, radius, and style
+        case 'rectangle':
+            return new Rectangle(startPos, 0, 0, defaultStyle); // Assuming Rectangle takes startPos, width, height, and style
+        // Add cases for new shapes here, initializing them with defaultStyle or a specific style
+    }
+}
+
+function updateAndDraw() {
+    if (input.inputs.lclick && !shapeBeingMade) {
+
+        const startPos = input.inputs.mouse.position.clone();
+        shapeBeingMade = createShape(startPos);
+
+    } else if (input.inputs.lclick && shapeBeingMade) {
+
+        // Ensure input.inputs.mouse.position is defined and correctly structured
+        if (input.inputs.mouse.position) {
+            shapeBeingMade.resize(input.inputs.mouse.position);
+        } else {
+            console.error('Mouse position is undefined');
+        }
+
+    } else if (!input.inputs.lclick && shapeBeingMade) {
+
+        objects.push(shapeBeingMade);
         shapeBeingMade = null;
     }
 
-    //draw objects
-    renderer.clearFrame();  //first clear
-    renderer.drawFrame(objects, fillColor, bordCol);
-    //draw shape
-    if (shapeBeingMade) {
-        renderer.drawCircle(shapeBeingMade, bordCol, null);
-    }
+    renderer.clearFrame();
+    objects.forEach(obj => obj.draw(ctx)); // Each shape uses its own style for drawing
+    if (shapeBeingMade) shapeBeingMade.draw(ctx);
+
+    requestAnimationFrame(updateAndDraw);
 }
-let renderInterval = setInterval(updateAndDraw, 1000 / 60);
+
+input.resizeCanvas();
+requestAnimationFrame(updateAndDraw);
