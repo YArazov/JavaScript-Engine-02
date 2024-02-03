@@ -22,6 +22,7 @@ export class Rectangle extends Shape {
         ctx.lineWidth = this.style?.lineWidth ?? 1; // Default to a lineWidth of 1 if undefined
         ctx.stroke();
     }
+    
     resize(mousePos) {
         // Calculate new dimensions based on mouse position
         const tempWidth = mousePos.x - this.startPos.x;
