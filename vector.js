@@ -33,12 +33,6 @@ export class Vec {
         return this;
     }
 
-    divide(s) {     //divide vector by scalar (shortening vector)
-        this.x /= s;
-        this.y /= s;
-        return this;
-    }
-
     // Method to calculate the distance between this vector and another vector
     distance(v) {
         const dx = this.x - v.x;
