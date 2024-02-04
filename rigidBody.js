@@ -1,0 +1,13 @@
+import { Vec } from "./vector";
+
+export class RigidBody {    //any object with physics and fixed shape
+    
+    constructor(s) {
+    this.shape = s;
+    this.velocity = new Vec(0, 0);
+    }
+
+    updateShape(time) {
+        const ds = this.velocity.multiply(time)
+    }
+}

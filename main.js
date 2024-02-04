@@ -7,6 +7,7 @@ import { Style } from './style.js';
 import { Vec } from './vector.js';
 
 let currentShapeType = 'circle'; // Dynamically change this to add more shapes
+const time = 1/60;  //based on seconds per frame
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('shapeToggle').addEventListener('click', toggleShape);
