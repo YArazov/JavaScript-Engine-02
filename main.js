@@ -2,115 +2,106 @@ import { Input } from './input.js';
 import { Circle } from './circle.js';
 import { Rectangle } from './rectangle.js';
 import { Renderer } from './renderer.js';
-import { Shape } from './shape.js'; // If needed for reference
 import { Style } from './style.js';
 import { Vec } from './vector.js';
 
-
 let currentShapeType = 'circle'; // Dynamically change this to add more shapes
-const time = 1 / 60;  //based on seconds per frame
 const LOWEST_DISTANCE_MOVING_OBJ = 30;
 
-
-document.addEventListener('DOMContentLoaded', () => {   //button implement
+document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('shapeToggle').addEventListener('click', toggleShape);
 });
 
-
-const canvas = document.getElementById("canvas");   //find the canvas element on the web page
-const ctx = canvas.getContext("2d");    //used to draw shapes on the canvas
-
-
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const renderer = new Renderer(canvas, ctx);
 const input = new Input(canvas, window);
 input.addListeners();
-
-
-const renderer = new Renderer(canvas, ctx);
-
 
 let objects = [];
 let shapeBeingMade = null;
 let movingShape = false;
 
-
-function toggleShape() {    //logic for button to switch between shapes
-    // Extend this toggle logic for more shapes
+function toggleShape() {
     currentShapeType = currentShapeType === 'circle' ? 'rectangle' : 'circle';
 }
 
-
-function createShape(startPos) {
-    // Example style - make this dynamic or user-configurable
+function createShape(mousePosition) {
+    const position = new Vec(mousePosition.x, mousePosition.y);
     const defaultStyle = new Style('cyan', 'grey', 3);
 
     switch (currentShapeType) {
         case 'circle':
-            return new Circle(startPos, 0, defaultStyle); // Circle takes startPos, radius, and style
+            return new Circle(position, 0, defaultStyle);
         case 'rectangle':
-            return new Rectangle(startPos, 0, 0, defaultStyle); // Rectangle takes startPos, width, height, and style
-        // Add cases for new shapes here, initializing them with defaultStyle or a specific style
+            return new Rectangle(position, 0, 0, defaultStyle);
+        // Additional shapes can be added here
     }
 }
 
-
 function updateAndDraw() {
     if (input.inputs.lclick && !shapeBeingMade) {
-
         const startPos = input.inputs.mouse.position.clone();
         shapeBeingMade = createShape(startPos);
-
     } else if (input.inputs.lclick && shapeBeingMade) {
-
-        // Ensure input.inputs.mouse.position is defined and correctly structured
         if (input.inputs.mouse.position) {
             shapeBeingMade.resize(input.inputs.mouse.position);
         } else {
             console.error('Mouse position is undefined');
         }
-
     } else if (!input.inputs.lclick && shapeBeingMade) {
-
         objects.push(shapeBeingMade);
         shapeBeingMade = null;
     }
 
+    if (input.inputs.rclick && !movingShape) {
+        let closestObji = null;
+        let currentLowestDist = LOWEST_DISTANCE_MOVING_OBJ;
+        objects.forEach((obj, i) => {
+            let isInsideShape = false;
 
-    //move the objects with the mouse
-    let closestObji = null;
-    let distanceMouseObj;
-    let currentLowestDist = LOWEST_DISTANCE_MOVING_OBJ;
-    if (input.inputs.rclick && !input.inputs.lclick && !movingShape) {
-        for (let i = 0; i < objects.length; i++) {    //for loop - iterate over all the objects in the array
-            const obj = objects[i];
-            distanceMouseObj = obj.shape.position.distanceTo(input.inputs.mouse.position);
-            if (distanceMouseObj < currentLowestDist) {
-                currentLowestDist = distanceMouseObj;
-                closestObji = i;    //the i of the closest object to the mouse
+            if (obj instanceof Circle) {
+                const distance = obj.position.distance(input.inputs.mouse.position);
+                isInsideShape = distance <= obj.radius;
+            } else if (obj instanceof Rectangle) {
+                const left = obj.position.x;
+                const right = obj.position.x + obj.width;
+                const top = obj.position.y;
+                const bottom = obj.position.y + obj.height;
+                const clickX = input.inputs.mouse.position.x;
+                const clickY = input.inputs.mouse.position.y;
+
+                isInsideShape = clickX >= left || clickX <= right || clickY >= top || clickY <= bottom;
             }
-        }
-    }
-    if (closestObji != null) {
-        movingShape = true;
-        objects[closestObji].isMoved = true;
-    }
-    if (movingShape && !input.inputs.rclick) {
-        movingShape = false;   //stop moving objects
-        for (let i = 0; i < objects.length; i++) {
-            objects[i].isMoved = false; //when not rclick anymore set isMoved to false
-        }
-    }
-    //update the positions and velocities for all moved objects
-    for (let i = 0; i < objects.length; i++) {
-        if (objects[i].isMoved) {
-            const movedObj = objects[i];
-            movedObj.shape.position.copy(input.inputs.mouse.position); //updates the position of the moved obj
+
+            if (isInsideShape && currentLowestDist > 0) { // Ensures we pick the first shape under cursor
+                closestObji = i;
+                currentLowestDist = 0; // Update based on your needs
+            }
+        });
+
+        if (closestObji !== null) {
+            movingShape = true;
+            objects[closestObji].isMoved = true;
         }
     }
 
+    if (movingShape && !input.inputs.rclick) {
+        movingShape = false;
+        objects.forEach(obj => obj.isMoved = false);
+    }
+
+    if (movingShape) {
+        objects.forEach(obj => {
+            if (obj.isMoved) {
+                obj.position = new Vec(input.inputs.mouse.position.x, input.inputs.mouse.position.y);
+            }
+        });
+    }
 
     renderer.clearFrame();
-    objects.forEach(obj => obj.draw(ctx)); // Each shape uses its own style for drawing
-    if (shapeBeingMade) shapeBeingMade.draw(ctx);   // draw method for creating shape
+    objects.forEach(obj => obj.draw(ctx));
+    if (shapeBeingMade) shapeBeingMade.draw(ctx);
 
     requestAnimationFrame(updateAndDraw);
 }

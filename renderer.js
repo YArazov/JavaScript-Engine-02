@@ -17,17 +17,21 @@ export class Renderer {
         this.ctx.imageSmoothingEnabled = false; //turns off image smoothing so image isnt blury
     }
 
+    // Validates and draws a shape
     drawShape(shape) {
-        shape.draw(this.ctx); // Directly call draw method of the shape
+        if (typeof shape.draw === 'function') {
+            shape.draw(this.ctx);
+        } else {
+            console.error('Provided object does not have a draw method:', shape);
+        }
     }
 
-    drawFrame(rigidBodies) {
-        rigidBodies.forEach(rigidBody => {
-            const shape = rigidBody.shape;
-            this.drawShape(shape); // Draw the shape associated with the rigid body
-        });
+    // Iterates through and draws each object in the provided array
+    drawFrame(objects) {
+        objects.forEach(object => this.drawShape(object));
     }
 
+    // Clears the canvas to prepare for the next frame or redraw
     clearFrame() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }

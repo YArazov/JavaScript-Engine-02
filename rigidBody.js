@@ -1,11 +1,12 @@
 import { Vec } from "./vector";
 
-export class RigidBody {    //any object with physics and fixed shape
-    
-    constructor(s) {
-    this.shape = s;
-    this.velocity = new Vec(0, 0);
-    this.isMoved = false;
+export class RigidBody {
+    constructor(position = new Vec(0, 0)) {
+        this.position = position;
+    }
+
+    moveTo(newPosition) {
+        this.position = newPosition.clone();
     }
 
     updateShape(time) {
