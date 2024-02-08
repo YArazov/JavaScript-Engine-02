@@ -19,6 +19,12 @@ export class Vec {
         return this;    //used for chaining methods
     }
 
+    subtract(v) {    //add v's x and y to this vector's x y and return the new vector
+        this.x -= v.x;  //operators
+        this.y -= v.y;  
+        return this;    //used for chaining methods
+    }
+
     divide(s) { // updated divide to handle cases of dividing by 0
         if (s !== 0) {
             this.x /= s;
@@ -40,7 +46,11 @@ export class Vec {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-
+    absolute() {
+        this.x = Math.abs(this.x);
+        this.y = Math.abs(this.y);
+        return this;
+    }
     //non-chainable methods
     clone() {   //create a new  vector with same coords
         return new Vec(this.x, this.y);
