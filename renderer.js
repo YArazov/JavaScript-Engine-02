@@ -21,8 +21,11 @@ export class Renderer {
         shape.draw(this.ctx); // Directly call draw method of the shape
     }
 
-    drawFrame(objects) {
-        objects.forEach(object => this.drawShape(object));
+    drawFrame(rigidBodies) {
+        rigidBodies.forEach(rigidBody => {
+            const shape = rigidBody.shape;
+            this.drawShape(shape); // Draw the shape associated with the rigid body
+        });
     }
 
     clearFrame() {

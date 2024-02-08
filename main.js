@@ -75,37 +75,35 @@ function updateAndDraw() {
     }
 
 
-    //move objects with mouse
+    //move the objects with the mouse
     let closestObji = null;
     let distanceMouseObj;
-    let currentLowestDistance = LOWEST_DISTANCE_MOVING_OBJ; // thresh-hold
-    if (input.inputs.rclick && !input.inputs.rclick && !movingShape) {
-        for (let i = 0; i < objects.length; i++) {  //goes over objects array
+    let currentLowestDist = LOWEST_DISTANCE_MOVING_OBJ;
+    if (input.inputs.rclick && !input.inputs.lclick && !movingShape) {
+        for (let i = 0; i < objects.length; i++) {    //for loop - iterate over all the objects in the array
             const obj = objects[i];
             distanceMouseObj = obj.shape.position.distanceTo(input.inputs.mouse.position);
             if (distanceMouseObj < currentLowestDist) {
-                currentLowestDistance = distanceMouseObj;
+                currentLowestDist = distanceMouseObj;
                 closestObji = i;    //the i of the closest object to the mouse
             }
         }
     }
-
     if (closestObji != null) {
         movingShape = true;
         objects[closestObji].isMoved = true;
     }
     if (movingShape && !input.inputs.rclick) {
-        movingShape = false;    // stop moving objects
+        movingShape = false;   //stop moving objects
         for (let i = 0; i < objects.length; i++) {
-            objects[i].isMoved = false; // whennot rclick anymore set isMoved to false (stop moving it)
+            objects[i].isMoved = false; //when not rclick anymore set isMoved to false
         }
     }
-
-    // update the positions and velocities for all moved objects
+    //update the positions and velocities for all moved objects
     for (let i = 0; i < objects.length; i++) {
         if (objects[i].isMoved) {
             const movedObj = objects[i];
-            movedObj.shape.position.copy(inp.inputs.mouse.position); //updates the position of the moved obj
+            movedObj.shape.position.copy(input.inputs.mouse.position); //updates the position of the moved obj
         }
     }
 
