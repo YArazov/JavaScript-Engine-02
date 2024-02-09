@@ -10,11 +10,11 @@ export class Circle extends Shape {
     draw(ctx) {
         ctx.beginPath(); // Start a new path for the circle
         ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2); // Draw the circle
-        ctx.fillStyle = this.style.fillColor; // Set fill style based on the style object
-        ctx.fill(); // Fill the circle
-        ctx.strokeStyle = this.style.borderColor; // Set stroke style
-        ctx.lineWidth = this.style.lineWidth; // Set line width
-        ctx.stroke(); // Stroke the circle outline
+        ctx.fillStyle = this.style?.fillColor ?? 'black';  // Default to black if fillColor is undefined
+        ctx.fill();
+        ctx.strokeStyle = this.style?.borderColor ?? 'black';// Default to black if borderColor is undefined
+        ctx.lineWidth = this.style?.lineWidth ?? 1; // Default to a lineWidth of 1 if undefined
+        ctx.stroke();
     }
 
     resize(mousePos) {
