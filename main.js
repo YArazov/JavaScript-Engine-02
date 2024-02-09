@@ -71,8 +71,10 @@ function updateAndDraw() {
                 const clickX = input.inputs.mouse.position.x;
                 const clickY = input.inputs.mouse.position.y;
 
-                isInsideShape = clickX >= left || clickX <= right || clickY >= top || clickY <= bottom;
+                // Correct use of logical AND (&&) for accurate hit detection
+                isInsideShape = clickX >= left && clickX <= right && clickY >= top && clickY <= bottom;
             }
+
 
             if (isInsideShape && currentLowestDist > 0) { // Ensures we pick the first shape under cursor
                 closestObji = i;
@@ -86,7 +88,7 @@ function updateAndDraw() {
         }
     }
 
-    if (movingShape && !input.inputs.rclick) {
+    if (!input.inputs.rclick && movingShape) {
         movingShape = false;
         objects.forEach(obj => obj.isMoved = false);
     }
