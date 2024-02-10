@@ -39,6 +39,7 @@ function createShape(mousePosition) {
             return circle;
         case 'rectangle':
             const rectangle = new Rectangle(position, 0, 0, defaultStyle);
+            rectangle.firstClick = position;
             rectangle.velocity = new Vec(0, 0); // Initialize velocity for the rectangle
             return rectangle;
     }
