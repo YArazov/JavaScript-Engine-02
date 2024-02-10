@@ -23,7 +23,7 @@ let shapeBeingMade = null;
 let movingShape = false;
 
 function toggleShape() {
-    currentShapeType = currentShapeType === 'circle' ? 'rectangle' : 'circle';
+        currentShapeType = currentShapeType === 'circle' ? 'rectangle' : 'circle';
 }
 
 function createShape(mousePosition) {
@@ -33,9 +33,9 @@ function createShape(mousePosition) {
     switch (currentShapeType) {
         case 'circle':
             return new Circle(position, 0, defaultStyle);
-        case 'rectangle':
+                    case 'rectangle':
             return new Rectangle(position, 0, 0, defaultStyle);
-        // Additional shapes can be added here
+            // Additional shapes can be added here
     }
 }
 
@@ -97,7 +97,7 @@ function updateAndDraw() {
         objects.forEach(obj => {
             if (obj.isMoved) {
                 obj.position = new Vec(input.inputs.mouse.position.x, input.inputs.mouse.position.y);
-            }
+                            }
         });
     }
 
