@@ -99,7 +99,7 @@ function updateAndDraw() {
     if (!input.inputs.rclick && movingShape) {
         const finalMousePos = input.inputs.mouse.position.clone();
         movingShape = false;
-        objects.forEach(obj => {
+            objects.forEach(obj => {
             if (obj.isMoved) {
                 obj.isMoved = false;
                 if (initialMousePosForMove) {
@@ -112,8 +112,8 @@ function updateAndDraw() {
             }
         });
     }
-
-    objects.forEach(obj => {
+    
+        objects.forEach(obj => {
         if (!obj.isMoved) {
             obj.position.x += obj.velocity.x;
             obj.position.y += obj.velocity.y;
