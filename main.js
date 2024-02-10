@@ -17,13 +17,15 @@ const ctx = canvas.getContext("2d");
 const renderer = new Renderer(canvas, ctx);
 const input = new Input(canvas, window);
 input.addListeners();
+let initialMousePosForMove = null;
 
 let objects = [];
 let shapeBeingMade = null;
 let movingShape = false;
 
 function toggleShape() {
-        currentShapeType = currentShapeType === 'circle' ? 'rectangle' : 'circle';
+    currentShapeType = currentShapeType === 'circle' ? 'rectangle' : 'circle';
+    document.getElementById('shapeToggle').textContent = currentShapeType.charAt(0).toUpperCase() + currentShapeType.slice(1);
 }
 
 function createShape(mousePosition) {
@@ -32,10 +34,13 @@ function createShape(mousePosition) {
 
     switch (currentShapeType) {
         case 'circle':
-            return new Circle(position, 0, defaultStyle);
-                    case 'rectangle':
-            return new Rectangle(position, 0, 0, defaultStyle);
-            // Additional shapes can be added here
+            const circle = new Circle(position, 0, defaultStyle);
+            circle.velocity = new Vec(0, 0); // Initialize velocity for the circle
+            return circle;
+        case 'rectangle':
+            const rectangle = new Rectangle(position, 0, 0, defaultStyle);
+            rectangle.velocity = new Vec(0, 0); // Initialize velocity for the rectangle
+            return rectangle;
     }
 }
 
@@ -55,6 +60,9 @@ function updateAndDraw() {
     }
 
     if (input.inputs.rclick && !movingShape) {
+        
+        initialMousePosForMove = input.inputs.mouse.position.clone(); // Capture initial position for velocity calculation
+
         let closestObji = null;
         let currentLowestDist = LOWEST_DISTANCE_MOVING_OBJ;
         objects.forEach((obj, i) => {
@@ -89,17 +97,28 @@ function updateAndDraw() {
     }
 
     if (!input.inputs.rclick && movingShape) {
+        const finalMousePos = input.inputs.mouse.position.clone();
         movingShape = false;
-        objects.forEach(obj => obj.isMoved = false);
-    }
-
-    if (movingShape) {
         objects.forEach(obj => {
             if (obj.isMoved) {
-                obj.position = new Vec(input.inputs.mouse.position.x, input.inputs.mouse.position.y);
-                            }
+                obj.isMoved = false;
+                if (initialMousePosForMove) {
+                    // Calculate velocity based on the difference between initial and final mouse positions
+                    const velocityX = finalMousePos.x - initialMousePosForMove.x;
+                    const velocityY = finalMousePos.y - initialMousePosForMove.y;
+                    obj.velocity = new Vec(velocityX, velocityY).normalize().scale(5); // Normalize and scale velocity
+                    initialMousePosForMove = null; // Reset initial position for next movement
+                }
+            }
         });
     }
+
+    objects.forEach(obj => {
+        if (!obj.isMoved) {
+            obj.position.x += obj.velocity.x;
+            obj.position.y += obj.velocity.y;
+        }
+    });
 
     renderer.clearFrame();
     objects.forEach(obj => obj.draw(ctx));

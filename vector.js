@@ -19,9 +19,9 @@ export class Vec {
         return this;    //used for chaining methods
     }
 
-        subtract(v) {    //add v's x and y to this vector's x y and return the new vector
+    subtract(v) {    //add v's x and y to this vector's x y and return the new vector
         this.x -= v.x;  //operators
-        this.y -= v.y;  
+        this.y -= v.y;
         return this;    //used for chaining methods
     }
 
@@ -58,5 +58,22 @@ export class Vec {
 
     magnitude() {      //find magnitude (the length of vector)
         return Math.sqrt((this.x * this.x) + (this.y * this.y));
+    }
+
+    // Normalizes the vector to have a magnitude of 1
+    normalize() {
+        const magnitude = this.magnitude();
+        if (magnitude > 0) {
+            this.x /= magnitude;
+            this.y /= magnitude;
+        }
+        return this; // Allows for chaining
+    }
+
+    // Scales the vector by a factor
+    scale(factor) {
+        this.x *= factor;
+        this.y *= factor;
+        return this; // Allows for chaining
     }
 }
