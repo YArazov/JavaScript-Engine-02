@@ -23,10 +23,6 @@ export class Rectangle extends Shape {
         const tempWidth = mousePos.x - this.position.x;
         const tempHeight = mousePos.y - this.position.y;
 
-        // Update drawing start positions based on the direction of resizing
-        this.drawStartX = tempWidth < 0 ? mousePos.x : this.position.x;
-        this.drawStartY = tempHeight < 0 ? mousePos.y : this.position.y;
-
         // Always store width and height as positive values
         this.width = Math.abs(tempWidth);
         this.height = Math.abs(tempHeight);

@@ -25,7 +25,7 @@ let movingShape = false;
 
 function toggleShape() {
     currentShapeType = currentShapeType === 'circle' ? 'rectangle' : 'circle';
-    document.getElementById('shapeToggle').textContent = currentShapeType.charAt(0).toUpperCase() + currentShapeType.slice(1);
+    document.getElementById('shapeToggle').innerText = currentShapeType.charAt(0).toUpperCase() + currentShapeType.slice(1);
 }
 
 function createShape(mousePosition) {
@@ -120,6 +120,13 @@ function updateAndDraw() {
         }
     });
 
+    for (let i = 0; i < objects.length; i++) {
+        if (objects[i].isMoved) {
+            const movedObj = objects[i];
+            movedObj.position.copy(input.inputs.mouse.position); //updates the position of the moved obj
+        }
+    }
+
     renderer.clearFrame();
     objects.forEach(obj => obj.draw(ctx));
     if (shapeBeingMade) shapeBeingMade.draw(ctx);
@@ -129,3 +136,7 @@ function updateAndDraw() {
 
 input.resizeCanvas();
 requestAnimationFrame(updateAndDraw);
+
+
+
+
