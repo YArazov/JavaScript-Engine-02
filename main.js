@@ -3,6 +3,7 @@ import {Circle} from './circle.js';
 import {Rect} from './rect.js';
 import {Input} from './input.js';
 import {RigidBody} from './rigidBody.js';
+import { Collisions } from './collisions.js';
 
 const SMALLEST_RADIUS = 10;
 const dt = 1/60;    //time per frame
@@ -14,6 +15,8 @@ const renderer = new Renderer(canv, ctx);
 const fillCol = "darkGray";
 const bordCol = "black";
 
+
+const col = new Collisions();
 //inputs
 const inp = new Input(canv, window, dt);
 inp.resizeCanvas();
@@ -79,6 +82,12 @@ function updateAndDraw() {
     for(let i=0; i<objects.length; i++) {
         objects[i].updateShape(dt);
     }
+
+    //COLLISIONS
+    col.clearCollisions();
+    col.narrowPhaseDetection(objects);  //  detect all possible collisions
+    col.resolveCollisions();    //  push off 
+
 
     //draw objects
     renderer.clearFrame();
