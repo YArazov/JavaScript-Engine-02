@@ -9,11 +9,11 @@ export class Collisions {
         this.collisions = []; //reset it (assigns it to empty array)
     }
 
-    narrowPhaseDetection(objects) {
+    narrowPhazeDetection(objects) {
         for (let i = 0; i < objects.length; i++) {
             for (let j = 1; j < objects.length; j++) {  // try j = i+1
                 if (j > i) {
-                    if (objects[i].shape instanceof Circle && objects[j].shape) {
+                    if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
                         this.detectCollisionCircleCircle(objects[i], objects[j]);
                     }   //  later detect rectangle rectangle here
                 }
@@ -28,12 +28,12 @@ export class Collisions {
 
         if (distance < circle1.radius + circle2.radius) {   //  finding if the objects touch/overlap, if they do, the collision acts on it
             const overlap = circle1.radius + circle2.radius - distance; //  vector from circle1 to circle2
-            const normal = circle2.position.clone().subtract(circle2.position).normalize(); //  dont want to change original vector, so we subtract from a clone() is a unit vector means directon
+            const normal = circle2.position.clone().subtract(circle1.position).normalize(); //  dont want to change original vector, so we subtract from a clone() is a unit vector means directon
             this.collisions.push({  //  make a object without a constructor
                 collidedPair: [obj1, obj2], //  make array of objects that are colliding
                 overlap: overlap,
                 normal: normal
-            });
+            })
         }
     }
 
