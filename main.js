@@ -35,8 +35,8 @@ class Main {
 
     // Setup UI controls and event listeners
     setupUI() {
-        const circleButton = document.getElementById("circleBtn");
-        const rectangleButton = document.getElementById("rectBtn");
+        const circleButton = document.getElementById("c");
+        const rectangleButton = document.getElementById("r");
 
         // Toggle shape selection based on button clicks
         circleButton.addEventListener('click', () => this.shapeSelected = 'circle');
