@@ -1,5 +1,5 @@
 import {Circle} from './circle.js';
-import {Rect} from './rect.js';
+import {Rect} from './rectangle.js';
 
 export class Renderer {
     constructor(canv, ctx) {
