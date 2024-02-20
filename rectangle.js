@@ -1,17 +1,11 @@
 import { Shape } from './Shape.js';
 import { Style } from './Style.js';
-import { Vec } from './vector.js'; // Make sure to import the Vec class
-import { RigidBody } from './rigidBody.js';
-import { Circle } from './circle.js';
-
 
 export class Rectangle extends Shape {
     constructor(position, width, height, style = new Style()) {
         super(position, style);
-        this.firstClick;
         this.width = width;
         this.height = height;
-        this.rigidBody = new RigidBody(this); // Use RigidBody instance directly
     }
 
     draw(ctx) {
