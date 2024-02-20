@@ -1,143 +1,125 @@
-import { Input } from './input.js';
-import { Circle } from './circle.js';
-import { Rectangle } from './rectangle.js';
-import { Renderer } from './renderer.js';
-import { Style } from './style.js';
-import { Vec } from './vector.js';
+import {Renderer} from './renderer.js';
+import {Circle} from './circle.js';
+import {Rect} from './rect.js';
+import {Input} from './input.js';
+import {RigidBody} from './rigidBody.js';
+import { Collisions } from './collisions.js';
 
-let currentShapeType = 'circle'; // Dynamically change this to add more shapes
-const LOWEST_DISTANCE_MOVING_OBJ = 30;
+const SMALLEST_RADIUS = 10;
+const dt = 1/60;    //time per frame
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('shapeToggle').addEventListener('click', toggleShape);
-});
+const canv = document.getElementById("canvas");
+const ctx = canv.getContext("2d");
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const renderer = new Renderer(canvas, ctx);
-const input = new Input(canvas, window);
-input.addListeners();
-let initialMousePosForMove = null;
+const renderer = new Renderer(canv, ctx);
+const fillCol = "darkGray";
+const bordCol = "black";
 
-let objects = [];
+
+const col = new Collisions();
+//inputs
+const inp = new Input(canv, window, dt);
+inp.resizeCanvas();
+inp.addListeners();
+
+const objects = [];
 let shapeBeingMade = null;
-let movingShape = false;
+//button variables
+let shapeSelected = 'r';
+const circleButton = document.getElementById("c");
+const rectButton = document.getElementById("r");
+circleButton.onclick = function() {
+    shapeSelected = 'c';
+};
+rectButton.onclick = function() {
+    shapeSelected = 'r';
+};
 
-function toggleShape() {
-    currentShapeType = currentShapeType === 'circle' ? 'rectangle' : 'circle';
-    document.getElementById('shapeToggle').innerText = currentShapeType.charAt(0).toUpperCase() + currentShapeType.slice(1);
-}
-
-function createShape(mousePosition) {
-    const position = new Vec(mousePosition.x, mousePosition.y);
-    const defaultStyle = new Style('cyan', 'grey', 3);
-
-    switch (currentShapeType) {
-        case 'circle':
-            const circle = new Circle(position, 0, defaultStyle);
-            circle.velocity = new Vec(0, 0); // Initialize velocity for the circle
-            return circle;
-        case 'rectangle':
-            const rectangle = new Rectangle(position, 0, 0, defaultStyle);
-            rectangle.firstClick = position;
-            rectangle.velocity = new Vec(0, 0); // Initialize velocity for the rectangle
-            return rectangle;
-    }
-}
-
+//MAIN LOOP
 function updateAndDraw() {
-    if (input.inputs.lclick && !shapeBeingMade) {
-        const startPos = input.inputs.mouse.position.clone();
-        shapeBeingMade = createShape(startPos);
-    } else if (input.inputs.lclick && shapeBeingMade) {
-        if (input.inputs.mouse.position) {
-            shapeBeingMade.resize(input.inputs.mouse.position);
-        } else {
-            console.error('Mouse position is undefined');
+
+    //make objects
+    if (inp.inputs.lclick && shapeBeingMade == null) {
+        //lesson 03 - make rectangles with mouse
+        if (shapeSelected == 'c') {
+            shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, 0);
+        } else if (shapeSelected == 'r') {
+            shapeBeingMade = new Rect(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS*2, SMALLEST_RADIUS*2);
         }
-    } else if (!input.inputs.lclick && shapeBeingMade) {
-        objects.push(shapeBeingMade);
+        
+    }
+    //adjust radius
+    if (inp.inputs.lclick && shapeBeingMade instanceof Circle) {
+        const selectedRadius = shapeBeingMade.position.clone().subtract(inp.inputs.mouse.position).magnitude();
+        shapeBeingMade.radius = selectedRadius < SMALLEST_RADIUS ? shapeBeingMade.radius : selectedRadius;
+    } 
+    //lesson 03 - adjust rectangle
+    else if (inp.inputs.lclick && shapeBeingMade instanceof Rect) {
+        const selectionVector = shapeBeingMade.position.clone().subtract(inp.inputs.mouse.position).absolute();
+        shapeBeingMade.width = selectionVector.x > SMALLEST_RADIUS ? selectionVector.x * 2 : SMALLEST_RADIUS * 2;
+        shapeBeingMade.height = selectionVector.y > SMALLEST_RADIUS ? selectionVector.y * 2 : SMALLEST_RADIUS * 2;
+    }
+
+    //add objects - lesson 03
+    if (shapeBeingMade && !inp.inputs.lclick) {
+        addObject(shapeBeingMade);
         shapeBeingMade = null;
     }
 
-    if (input.inputs.rclick && !movingShape) {
-        
-        initialMousePosForMove = input.inputs.mouse.position.clone(); // Capture initial position for velocity calculation
-
-        let closestObji = null;
-        let currentLowestDist = LOWEST_DISTANCE_MOVING_OBJ;
-        objects.forEach((obj, i) => {
-            let isInsideShape = false;
-
-            if (obj instanceof Circle) {
-                const distance = obj.position.distance(input.inputs.mouse.position);
-                isInsideShape = distance <= obj.radius;
-            } else if (obj instanceof Rectangle) {
-                const left = obj.position.x;
-                const right = obj.position.x + obj.width;
-                const top = obj.position.y;
-                const bottom = obj.position.y + obj.height;
-                const clickX = input.inputs.mouse.position.x;
-                const clickY = input.inputs.mouse.position.y;
-
-                // Correct use of logical AND (&&) for accurate hit detection
-                isInsideShape = clickX >= left && clickX <= right && clickY >= top && clickY <= bottom;
-            }
-
-
-            if (isInsideShape && currentLowestDist > 0) { // Ensures we pick the first shape under cursor
-                closestObji = i;
-                currentLowestDist = 0; // Update based on your needs
-            }
-        });
-
-        if (closestObji !== null) {
-            movingShape = true;
-            objects[closestObji].isMoved = true;
-        }
+    //move objects with mouse
+    if(!inp.inputs.lclick && inp.inputs.rclick && !inp.inputs.mouse.movedObject) {
+        const closestObject = findClosestObject(objects, inp.inputs.mouse.position);
+        inp.inputs.mouse.movedObject = closestObject == null ? null : closestObject;
+    }
+    if(!inp.inputs.rclick || inp.inputs.lclick) {
+        inp.inputs.mouse.movedObject = null;
+    }
+    if(inp.inputs.mouse.movedObject) {
+        moveObjectWithMouse(inp.inputs.mouse.movedObject);
     }
 
-    if (!input.inputs.rclick && movingShape) {
-        const finalMousePos = input.inputs.mouse.position.clone();
-        movingShape = false;
-            objects.forEach(obj => {
-            if (obj.isMoved) {
-                obj.isMoved = false;
-                if (initialMousePosForMove) {
-                    // Calculate velocity based on the difference between initial and final mouse positions
-                    const velocityX = finalMousePos.x - initialMousePosForMove.x;
-                    const velocityY = finalMousePos.y - initialMousePosForMove.y;
-                    obj.velocity = new Vec(velocityX, velocityY).normalize().scale(5); // Normalize and scale velocity
-                    initialMousePosForMove = null; // Reset initial position for next movement
-                }
-            }
-        });
-    }
-    
-        objects.forEach(obj => {
-        if (!obj.isMoved) {
-            obj.position.x += obj.velocity.x;
-            obj.position.y += obj.velocity.y;
-        }
-    });
-
-    for (let i = 0; i < objects.length; i++) {
-        if (objects[i].isMoved) {
-            const movedObj = objects[i];
-            movedObj.position.copy(input.inputs.mouse.position); //updates the position of the moved obj
-        }
+    //Lesson 03 - update object positions with velocity
+    for(let i=0; i<objects.length; i++) {
+        objects[i].updateShape(dt);
     }
 
+    //COLLISIONS
+    col.clearCollisions();
+    col.narrowPhazeDetection(objects);  //  detect all possible collisions
+    col.resolveCollisions();    //  push off 
+
+
+    //draw objects
     renderer.clearFrame();
-    objects.forEach(obj => obj.draw(ctx));
-    if (shapeBeingMade) shapeBeingMade.draw(ctx);
+    renderer.drawFrame(objects, fillCol, bordCol);
+    //draw shape
+    if (shapeBeingMade) {
+        shapeBeingMade.draw(ctx, bordCol, null);
+    }
 
-    requestAnimationFrame(updateAndDraw);
+}
+let renderInterval = setInterval(updateAndDraw, 1000 / 60);
+
+function findClosestObject(objects, vector) {
+    let closestObject = null;
+    let distance;
+    let lowestDistance = 30;
+    for(let i=0; i<objects.length; i++) {
+        distance = objects[i].shape.position.distanceTo(vector);
+        if (distance < lowestDistance) {
+            lowestDistance = distance;
+            closestObject = objects[i];
+        }
+    }
+    return closestObject;
 }
 
-input.resizeCanvas();
-requestAnimationFrame(updateAndDraw);
+function moveObjectWithMouse(object) {
+    object.shape.position.copy(inp.inputs.mouse.position);
+    object.velocity.copy(inp.inputs.mouse.velocity);
+}
 
-
-
-
+function addObject(shape) {
+    const object = new RigidBody(shape);  
+    objects.push(object);
+} 

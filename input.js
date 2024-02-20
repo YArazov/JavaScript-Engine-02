@@ -1,43 +1,51 @@
 import { Vec } from './vector.js';
 
 export class Input {
+    constructor(canv, win, dt) {
+        this.canv = canv; // Canvas element
+        this.window = win; // Window object
+        this.dt = dt; // Delta time for velocity calculation
 
-    constructor(canv, win) {
-        this.canv = canv;
-        this.window = win;
-
+        // Initializing input states with extended functionality
         this.inputs = {
             mouse: {
-                position: new Vec(0, 0) //from vector class to create 
+                position: new Vec(0, 0), // Current mouse position
+                velocity: new Vec(0, 0), // Current mouse velocity
+                movedObject: null // Placeholder for object being moved, if any
             },
-            lclick: false,
-            rclick: false
+            lclick: false, // Left click state
+            rclick: false, // Right click state
+            space: false, // Spacebar state
+            touches: 0 // Number of touch points
         };
 
-        //function binding: https://www.geeksforgeeks.org/javascript-function-binding/
-        this.mouseDown = this.mouseDown.bind(this); //fix the meaning of the key word "this" so that it always refers to the Inputs
-        this.mouseUp = this.mouseUp.bind(this); //without biding we get error "Undefined"
+        // Binding this context to event handlers
+        this.mouseDown = this.mouseDown.bind(this);
+        this.mouseUp = this.mouseUp.bind(this);
         this.onContextMenu = this.onContextMenu.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.resizeCanvas = this.resizeCanvas.bind(this);
     }
 
+    // Method to add event listeners for various user actions
     addListeners() {
-        this.canv.addEventListener("mousedown", this.mouseDown);    //listens for clicking a mouse button
-        this.canv.addEventListener("mouseup", this.mouseUp);    //listens for releasing the mouse button
-        this.canv.addEventListener('contextmenu', this.onContextMenu);  //right click gives us context menu
-        this.canv.addEventListener('mousemove', this.mouseMove);    //listens for movement of the mouse cursor and stores the coordinates
-        this.window.addEventListener('resize', this.resizeCanvas, false); //changes size of canvas, like how you re-adjust the window size on computer, but just for the canvas
+        this.canv.addEventListener("mousedown", this.mouseDown);
+        this.canv.addEventListener("mouseup", this.mouseUp);
+        this.canv.addEventListener('contextmenu', this.onContextMenu);
+        this.canv.addEventListener('mousemove', this.mouseMove);
+        this.window.addEventListener('resize', this.resizeCanvas, false);
     }
 
+    // Handles mouse down events
     mouseDown(e) {
-        if (e.button == 0) {  //0 value means the left button was clicked
+        if (e.button == 0) {
             this.inputs.lclick = true;
-        } else if (e.button == 2) {   //2 value means right click
+        } else if (e.button == 2) {
             this.inputs.rclick = true;
         }
     }
 
+    // Handles mouse up events
     mouseUp(e) {
         if (e.button == 0) {
             this.inputs.lclick = false;
@@ -46,23 +54,37 @@ export class Input {
         }
     }
 
+    // Prevents the default context menu from appearing on right-click
     onContextMenu(e) {
         e.preventDefault();
     }
 
+    // Handles mouse movement, updating position and velocity
     mouseMove(e) {
         const x = e.pageX - this.canv.offsetLeft;
         const y = e.pageY - this.canv.offsetTop;
+
+        const dx = x - this.inputs.mouse.position.x;
+        const dy = y - this.inputs.mouse.position.y;
+
+        // Update velocity based on delta time
+        this.inputs.mouse.velocity.x = dx / this.dt;
+        this.inputs.mouse.velocity.y = dy / this.dt;
+
         this.inputs.mouse.position.x = x;
         this.inputs.mouse.position.y = y;
+
+        // Reset velocity to 0 after 100ms of inactivity
+        this.window.clearTimeout(this.inputs.mouseTimer);
+        this.inputs.mouseTimer = this.window.setTimeout(() => {
+            this.inputs.mouse.velocity.x = 0;
+            this.inputs.mouse.velocity.y = 0;
+        }, 100);
     }
 
-    //debouncing (limiting time between actions, 100 milliseconds minimum between when something can happen)
+    // Adjusts canvas size on window resize
     resizeCanvas() {
-        clearTimeout(this.resizeTimeout);
-        this.resizeTimeout = setTimeout(() => {
-            this.canv.width = this.window.innerWidth;
-            this.canv.height = this.window.innerHeight;
-        }, 100); // Adjust delay as needed
+        this.canv.width = this.window.innerWidth;
+        this.canv.height = this.window.innerHeight;
     }
 }

@@ -1,16 +1,14 @@
-import { Vec } from "./vector";
+import {Vec} from './vector.js';
 
 export class RigidBody {
-    constructor(position = new Vec(0, 0)) {
-        this.position = position;
-    }
+	constructor(shape) {
+		this.shape = shape;   
+		this.velocity = new Vec(0, 0);
+	}	
 
-    moveTo(newPosition) {
-        this.position = newPosition.clone();
-    }
+	updateShape(dt) {
+		const ds = this.velocity.clone().multiply(dt);  //multiply v * dt = giving you displacement per frame
+		this.shape.position.add(ds);
+    } 
 
-    updateShape(time) {
-        const ds = this.velocity.clone().multiply(time); //method chaning (first clone the multiply)
-        this.shape.position.add(ds);
-    }
 }

@@ -1,79 +1,72 @@
 export class Vec {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+	//chainable methods
+	copy(v) {	//copy the xy of another vector into this
+		this.x = v.x;
+		this.y = v.y;
+		return this;
+	}
 
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
+	add(v) {	//add a vector to this
+		this.x += v.x;
+		this.y += v.y;
+		return this;
+	}
 
-    //chainable methods 
+	subtract(v) {
+		this.x -= v.x;
+		this.y -= v.y;
+		return this;
+	}
 
-    copy(v) {   //make this vector have the same value (coords) as another vector
-        this.x = v.x;
-        this.y = v.y;
-        return this;
-    }
+	multiply(s) {
+		this.x *= s;
+		this.y *= s;
+		return this;
+	}
 
-    add(v) {    //add v's and y to this vector;s x y and return the newest vector
-        this.x += v.x; //operators
-        this.y += v.y;
-        return this;    //used for chaining methods
-    }
+	divide(s) {
+		this.x /= s;
+		this.y /= s;
+		return this;
+	}
 
-    subtract(v) {    //add v's x and y to this vector's x y and return the new vector
-        this.x -= v.x;  //operators
-        this.y -= v.y;
-        return this;    //used for chaining methods
-    }
+	absolute() {
+		this.x = Math.abs(this.x);
+		this.y = Math.abs(this.y);
+		return this;
+	}
 
-    divide(s) { // updated divide to handle cases of dividing by 0
-        if (s !== 0) {
-            this.x /= s;
-            this.y /= s;
-        }
-        return this;
-    }
+	// Normalizes the vector to have a magnitude of 1 (makes a unit vector)
+	normalize() {
+		const length = this.magnitude();
+		if (length > 0) {
+			this.x /= length;
+			this.y /= length;
+		}
+		return this; // Allows for chaining
+	}
 
-    multiply(s) {   //multiply vector by a scalar (lengthening vector)
-        this.x *= s;
-        this.y *= s;
-        return this;
-    }
+	//non-chainable
+	clone() {	//create a new vector with xy of this
+		return new Vec(this.x, this.y);
+	}
 
-    // Method to calculate the distance between this vector and another vector
-    distance(v) {
-        const dx = this.x - v.x;
-        const dy = this.y - v.y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
+	magnitude() {
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
 
-    absolute() {
-        this.x = Math.abs(this.x);
-        this.y = Math.abs(this.y);
-        return this;
-    }
-    //non-chainable methods
-    clone() {   //create a new  vector with same coords
-        return new Vec(this.x, this.y);
-    }
+	distanceTo(v) {
+		return this.clone().subtract(v).magnitude();
+	}
 
-    magnitude() {      //find magnitude (the length of vector)
-        return Math.sqrt((this.x * this.x) + (this.y * this.y));
-    }
-
-    // Normalizes the vector to have a magnitude of 1
-    normalize() {
-        const magnitude = this.magnitude();
-        if (magnitude > 0) {
-            this.x /= magnitude;
-            this.y /= magnitude;
-        }
-        return this; // Allows for chaining
-    }
-
-    // Scales the vector by a factor
-    scale(factor) {
-        this.x *= factor;
-        this.y *= factor;
-        return this; // Allows for chaining
-    }
+	// Scales the vector by a factor
+	scale(factor) {
+		this.x *= factor;
+		this.y *= factor;
+		return this; // Allows for chaining
+	}
 }
