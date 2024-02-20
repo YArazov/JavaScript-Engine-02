@@ -3,32 +3,32 @@ export class Vec {
 		this.x = x;
 		this.y = y;
 	}
-	//chainable methods
-	copy(v) {	//copy the xy of another vector into this
+    //chainable methods
+	copy (v) {	//copy the xy of another vector into this
 		this.x = v.x;
 		this.y = v.y;
 		return this;
 	}
-
-	add(v) {	//add a vector to this
+	
+	add (v) {		//add a vector to this
 		this.x += v.x;
 		this.y += v.y;
 		return this;
 	}
-
-	subtract(v) {
+	
+	subtract (v) {
 		this.x -= v.x;
 		this.y -= v.y;
 		return this;
 	}
-
-	multiply(s) {
+	
+	multiply (s) {
 		this.x *= s;
 		this.y *= s;
 		return this;
 	}
-
-	divide(s) {
+	
+	divide (s) {
 		this.x /= s;
 		this.y /= s;
 		return this;
@@ -40,33 +40,25 @@ export class Vec {
 		return this;
 	}
 
-	// Normalizes the vector to have a magnitude of 1 (makes a unit vector)
 	normalize() {
 		const length = this.magnitude();
-		if (length > 0) {
+		if(length > 0) {
 			this.x /= length;
 			this.y /= length;
 		}
-		return this; // Allows for chaining
+		return this;
 	}
-
+	
 	//non-chainable
-	clone() {	//create a new vector with xy of this
+	clone () {	//create a new vector with xy of this
 		return new Vec(this.x, this.y);
 	}
 
-	magnitude() {
+    magnitude () {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 
-	distance(v) {
+	distanceTo (v) {
 		return this.clone().subtract(v).magnitude();
-	}
-
-	// Scales the vector by a factor
-	scale(factor) {
-		this.x *= factor;
-		this.y *= factor;
-		return this; // Allows for chaining
 	}
 }
