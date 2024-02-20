@@ -27,6 +27,7 @@ class Main {
         // Setup event listeners for UI and canvas
         this.setupUI();
         this.input.addListeners();
+        this.input.resizeCanvas();
         this.animate();
 
         this.movingShape = false;
@@ -41,10 +42,6 @@ class Main {
         // Toggle shape selection based on button clicks
         circleButton.addEventListener('click', () => this.shapeSelected = 'circle');
         rectangleButton.addEventListener('click', () => this.shapeSelected = 'rectangle');
-
-        // Resize canvas to fit window and adjust on resize
-        this.input.resizeCanvas();
-        window.addEventListener('resize', () => this.input.resizeCanvas());
     }
 
     // The main animation loop
