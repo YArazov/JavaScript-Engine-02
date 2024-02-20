@@ -161,7 +161,7 @@ class Main {
         // Handle collisions among objects
         handleCollisions() {
             this.collisions.clearCollisions();
-            this.collisions.narrowPhaseDetection(this.objects);
+            this.collisions.narrowPhazeDetection(this.objects);
             this.collisions.resolveCollisions();
         }
 }
