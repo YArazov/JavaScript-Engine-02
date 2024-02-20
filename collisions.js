@@ -1,4 +1,5 @@
 import { Circle } from "./circle.js";
+import {Rect} from './rectangle.js';
 
 export class Collisions {
     constructor() {
@@ -11,11 +12,13 @@ export class Collisions {
 
     narrowPhazeDetection(objects) {
         for (let i = 0; i < objects.length; i++) {
-            for (let j = 1; j < objects.length; j++) {  // try j = i+1
+            for (let j = i + 1; j < objects.length; j++) {  // try j = i+1
                 if (j > i) {
                     if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
                         this.detectCollisionCircleCircle(objects[i], objects[j]);
-                    }   //  later detect rectangle rectangle here
+                    } else if (objects[i].shape instanceof Rect && objects[j].shape instanceof Rect) {
+                        this.detectCollisionRectangleRectangle(objects[i], objects[j]);
+                    }
                 }
             }
         }
@@ -39,6 +42,33 @@ export class Collisions {
 
     //  detect rectangles collisions
 
+    detectCollisionRectangleRectangle(obj1, obj2) {
+        const rect1 = obj1.shape;
+        const rect2 = obj2.shape;
+    
+        // Calculate the left, right, top, and bottom of each rectangle
+        const left1 = rect1.position.x - rect1.width / 2;
+        const right1 = rect1.position.x + rect1.width / 2;
+        const top1 = rect1.position.y - rect1.height / 2;
+        const bottom1 = rect1.position.y + rect1.height / 2;
+    
+        const left2 = rect2.position.x - rect2.width / 2;
+        const right2 = rect2.position.x + rect2.width / 2;
+        const top2 = rect2.position.y - rect2.height / 2;
+        const bottom2 = rect2.position.y + rect2.height / 2;
+    
+        // Check for overlap
+        const isColliding = right1 >= left2 &&
+                            left1 <= right2 &&
+                            bottom1 >= top2 &&
+                            top1 <= bottom2;
+    
+        if (isColliding) {
+            console.log('true');
+        } else {
+            console.log('false');
+        }
+    }
     pushOffObjects(obj1, obj2, overlap, normal) {
         obj1.shape.position.subtract(normal.clone().multiply(overlap / 2));
         obj2.shape.position.add(normal.clone().multiply(overlap / 2));
