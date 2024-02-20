@@ -1,5 +1,5 @@
-import { Shape } from './shape.js';
-import { Style } from './style.js';
+import { Shape } from './Shape.js';
+import { Style } from './Style.js';
 
 export class Circle extends Shape {
     constructor(position, radius = 0, style = new Style()) {
@@ -10,10 +10,10 @@ export class Circle extends Shape {
     draw(ctx) {
         ctx.beginPath(); // Start a new path for the circle
         ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2); // Draw the circle
-        ctx.fillStyle = this.style?.fillColor ?? 'black';  // Default to black if fillColor is undefined
+        ctx.fillStyle = this.style.fillColor;
         ctx.fill();
-        ctx.strokeStyle = this.style?.borderColor ?? 'black';// Default to black if borderColor is undefined
-        ctx.lineWidth = this.style?.lineWidth ?? 1; // Default to a lineWidth of 1 if undefined
+        ctx.strokeStyle = this.style.borderColor;
+        ctx.lineWidth = this.style.lineWidth;
         ctx.stroke();
     }
 

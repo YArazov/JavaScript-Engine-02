@@ -1,7 +1,6 @@
 import { Shape } from './Shape.js';
 import { Style } from './Style.js';
 import { Vec } from './vector.js'; // Make sure to import the Vec class
-import { circleRectCollision } from './collisionUtils.js'; // Import the circleRectCollision function
 import { RigidBody } from './rigidBody.js';
 import { Circle } from './circle.js';
 
