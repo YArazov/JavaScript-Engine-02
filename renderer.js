@@ -17,18 +17,11 @@ export class Renderer {
         this.ctx.imageSmoothingEnabled = false; //turns off image smoothing so image isnt blury
     }
 
-    // Validates and draws a shape
-    drawShape(shape) {
-        if (typeof shape.draw === 'function') {
-            shape.draw(this.ctx);
-        } else {
-            console.error('Provided object does not have a draw method:', shape);
-        }
-    }
-
     // Iterates through and draws each object in the provided array
-    drawFrame(objects) {
-        objects.forEach(object => this.drawShape(object));
+    drawFrame(objects, fillCol, bordCol) {
+        for (let i = 0; i<objects.length; i++) {
+            objects[i].shape.draw(this.ctx, fillCol, bordCol);
+        } 
     }
 
     // Clears the canvas to prepare for the next frame or redraw
