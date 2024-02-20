@@ -24,6 +24,12 @@ export class Rectangle extends Shape {
         ctx.stroke();
     }
 
+    updateShape(dt) {
+        // Update rectangle properties, similar to the Circle example
+        this.position.x += this.velocity.x * dt;
+        this.position.y += this.velocity.y * dt;
+    }
+    
     resize(mousePos) {
         const tempWidth = mousePos.x - this.position.x;
         const tempHeight = mousePos.y - this.position.y;

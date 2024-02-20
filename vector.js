@@ -59,7 +59,7 @@ export class Vec {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 
-	distanceTo(v) {
+	distance(v) {
 		return this.clone().subtract(v).magnitude();
 	}
 
