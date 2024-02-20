@@ -1,44 +1,34 @@
-import { Shape } from './shape.js';
-import { Style } from './style.js';
+import { Shape } from './Shape.js';
+import { Style } from './Style.js';
+import { Vec } from './vector.js'; // Make sure to import the Vec class
+import { circleRectCollision } from './collisionUtils.js'; // Import the circleRectCollision function
+import { RigidBody } from './rigidBody.js';
+import { Circle } from './circle.js';
+
 
 export class Rectangle extends Shape {
-    constructor(position, width, height, style) {
+    constructor(position, width, height, style = new Style()) {
         super(position, style);
         this.firstClick;
         this.width = width;
         this.height = height;
+        this.rigidBody = new RigidBody(this); // Use RigidBody instance directly
     }
 
     draw(ctx) {
-        ctx.save();
-        ctx.translate(this.position.x, this.position.y);
-        ctx.fillStyle = this.style?.fillColor ?? 'black';  // Default to black if fillColor is undefined
-        ctx.fillRect(
-            - this.width/2,
-            - this.height/2,
-            this.width,
-            this.height,
-        );
-        
-        ctx.strokeStyle = this.style?.borderColor ?? 'black';// Default to black if borderColor is undefined
-        ctx.lineWidth = this.style?.lineWidth ?? 1; // Default to a lineWidth of 1 if undefined
-       	ctx.strokeRect(
-            - this.width/2,
-            - this.height/2,
-            this.width,
-            this.height,
-        );
-        ctx.restore();
-
+        ctx.beginPath();
+        ctx.rect(this.position.x, this.position.y, this.width, this.height);
+        ctx.fillStyle = this.style.fillColor;
+        ctx.fill();
+        ctx.strokeStyle = this.style.borderColor;
+        ctx.lineWidth = this.style.lineWidth;
+        ctx.stroke();
     }
-    
-    resize(mousePos) {
-        let vectorFromFirstToCurrent = mousePos.clone().subtract(this.firstClick);
-        //find point halfway between two mouse positions
-        this.position = this.firstClick.clone().add(vectorFromFirstToCurrent.clone().divide(2));
 
-        // Always store width and height as positive values
-        this.width = Math.abs(vectorFromFirstToCurrent.x);
-        this.height = Math.abs(vectorFromFirstToCurrent.y);
+    resize(mousePos) {
+        const tempWidth = mousePos.x - this.position.x;
+        const tempHeight = mousePos.y - this.position.y;
+        this.width = Math.abs(tempWidth);
+        this.height = Math.abs(tempHeight);
     }
 }

@@ -5,7 +5,7 @@ import { Input } from './input.js';
 import { RigidBody } from './rigidBody.js';
 import { Collisions } from './collisions.js';
 import { Vec } from './vector.js';
-import { Style } from './style.js';
+
 
 // Setup constants and utility functions
 const SMALLEST_RADIUS = 10;
