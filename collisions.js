@@ -69,6 +69,7 @@ export class Collisions {
             console.log('false');
         }
     }
+
     pushOffObjects(obj1, obj2, overlap, normal) {
         obj1.shape.position.subtract(normal.clone().multiply(overlap / 2));
         obj2.shape.position.add(normal.clone().multiply(overlap / 2));
