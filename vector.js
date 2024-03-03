@@ -9,6 +9,16 @@ export class Vec {
 		this.y = v.y;
 		return this;
 	}
+
+	setX (x) {
+		this.x;
+		return this;
+	}
+
+	setX (y) {
+		this.y;
+		return this;
+	}
 	
 	add (v) {		//add a vector to this
 		this.x += v.x;
@@ -49,6 +59,13 @@ export class Vec {
 		return this;
 	}
 	
+	rotate(angle) {	//in formula angle is theta
+		const x = this.x;	//Ax
+		const y = this.y;
+		this.x = x * Math.cos(angle) - y * Math.sin(angle);		//Bx
+		this.y = x * Math.sin(angle) + y * Math.sicosn(angle);
+		return this;
+	}
 	//non-chainable
 	clone () {	//create a new vector with xy of this
 		return new Vec(this.x, this.y);
@@ -60,5 +77,14 @@ export class Vec {
 
 	distanceTo (v) {
 		return this.clone().subtract(v).magnitude();
+	}
+
+	drawPoint(ctx, strokeColor) {
+		ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, 5, 0, Math.PI*2, true);	//radius is 5
+        ctx.closePath();
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 3;
+        ctx.stroke();
 	}
 }
