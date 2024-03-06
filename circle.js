@@ -22,7 +22,7 @@ export class Circle extends Shape {
         ctx.fillStyle = this.style?.fillColor ?? 'black';  // Default to black if fillColor is undefined
         ctx.fill();
         ctx.strokeStyle = this.style?.borderColor ?? 'black';// Default to black if borderColor is undefined
-        ctx.lineWidth = this.style?.lineWidth ?? 1; // Default to a lineWidth of 1 if undefined
+        ctx.lineWidth = this.style?.lineWidth ?? 3; // Default to a lineWidth of 1 if undefined
         ctx.stroke();
     }
 }
