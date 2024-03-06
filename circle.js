@@ -1,11 +1,13 @@
+import {Aabb} from './aabb.js';
 import { Shape } from './Shape.js';
 import { Style } from './Style.js';
+import {Vec} from './vector.js';
 
 export class Circle extends Shape {
     constructor(position, radius = 0, style = new Style()) {
         super(position, style); // Correctly pass position and style to the Shape constructor
         this.radius = radius; // Initialize radius
-        
+
         this.aabb = new Aabb(new Vec(0,0),new Vec(0,0));
 	}
     
