@@ -50,12 +50,13 @@ export class Input {
     mouseUp(e) {
         if (e.button == 0) {
             this.inputs.lclick = false;
+            if (this.onShapeRelease) {
+                this.onShapeRelease(this.inputs.mouse.velocity);
+            }
         } else if (e.button == 2) {
             this.inputs.rclick = false;
         }
-        if (e.button == 0 && this.onShapeRelease) {
-            this.onShapeRelease(this.inputs.mouse.velocity);
-        }
+        
     }
 
     // Prevents the default context menu from appearing on right-click
