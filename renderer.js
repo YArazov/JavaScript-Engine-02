@@ -1,30 +1,45 @@
-import { Circle } from "./circle.js";
-import { Rectangle } from "./rectangle.js";
-
 export class Renderer {
     constructor(canv, ctx) {
         this.canvas = canv;
         this.ctx = ctx;
         this.adjustCanvasForDPI();
+        // Initialize arrays for persistent and temporary renderings
+        this.renderedAlways = [];   // Objects always rendered
+        this.renderedNextFrame = []; // Objects rendered for only one frame
     }
-    // method makes outline and image equal and clear
+
     adjustCanvasForDPI() {
-        const dpr = window.devicePixelRatio || 1; //sees if more than one pixel per pixel, if not default to 1
-        const rect = this.canvas.getBoundingClientRect(); //gets size of canvas on page
-        this.canvas.width = rect.width * dpr; // make canvas bigger if screen has higher resolution
-        this.canvas.height = rect.height * dpr; //make canvas bigger if screen has higher resolution
-        this.ctx.scale(dpr, dpr); //makes canvas size the one you set
-        this.ctx.imageSmoothingEnabled = false; //turns off image smoothing so image isnt blury
+        const dpr = window.devicePixelRatio || 1;
+        const rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = rect.height * dpr;
+        this.ctx.scale(dpr, dpr);
+        this.ctx.imageSmoothingEnabled = false;
     }
 
-    // Iterates through and draws each object in the provided array
     drawFrame(objects, fillCol, bordCol) {
-        for (let i = 0; i<objects.length; i++) {
-            objects[i].shape.draw(this.ctx, fillCol, bordCol);
-        } 
+        // First, clear the canvas to prepare for new drawings
+        this.clearFrame();
+
+        // Draw each object and its AABB
+        objects.forEach(object => {
+            object.shape.draw(this.ctx, fillCol, bordCol);
+            // Assuming shape.aabb.draw() method exists and works similarly to the 'Rect' project
+            object.shape.aabb.draw(this.ctx, "red");
+        });
+
+        // Draw temporary objects and clear the list afterward
+        this.renderedNextFrame.forEach(tempObject => {
+            tempObject.draw(this.ctx, fillCol, bordCol);
+        });
+        this.renderedNextFrame = [];
+
+        // Draw persistent objects, do not clear the list
+        this.renderedAlways.forEach(alwaysObject => {
+            alwaysObject.draw(this.ctx, fillCol, bordCol);
+        });
     }
 
-    // Clears the canvas to prepare for the next frame or redraw
     clearFrame() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
