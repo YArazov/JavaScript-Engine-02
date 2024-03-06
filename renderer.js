@@ -22,18 +22,19 @@ export class Renderer {
     
         // Assuming each object has a shape with a draw method that handles its own styling
         objects.forEach(object => {
-            object.shape.draw(this.ctx); // The draw method uses the shape's own style
+            object.shape.draw(this.ctx); // Draws the shape using its own styling method
+            object.shape.aabb.draw(this.ctx, "red"); // Corrected to use 'object.shape' for AABB drawing
         });
 
         // Draw temporary objects and clear the list afterward
         this.renderedNextFrame.forEach(tempObject => {
-            tempObject.shape.draw(this.ctx);
+            tempObject.draw(this.ctx);
         });
         this.renderedNextFrame = [];
 
         // Draw persistent objects, do not clear the list
         this.renderedAlways.forEach(alwaysObject => {
-            alwaysObject.shape.draw(this.ctx);
+            alwaysObject.draw(this.ctx);
         });
     }
 
