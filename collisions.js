@@ -22,7 +22,7 @@ export class Collisions {
 
     narrowPhazeDetection(objects) {
         for (let i = 0; i < objects.length; i++) {
-            for (let j = i + 1; j < objects.length; j++) {  // try j = i+1
+            for (let j = i + 1; j < objects.length; j++) {  
                 if (j > i) {
                     if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
                         this.detectCollisionCircleCircle(objects[i], objects[j]);

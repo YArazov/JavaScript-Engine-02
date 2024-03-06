@@ -47,42 +47,42 @@ function updateAndDraw() {
         if (shapeSelected == 'c') {
             shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, defaultStyle);
         } else if (shapeSelected == 'r') {
-            shapeBeingMade = new Rectangle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS*2, SMALLEST_RADIUS*2, defaultStyle);
+            shapeBeingMade = new Rectangle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS * 2, SMALLEST_RADIUS * 2, defaultStyle);
         }
-        
+
     }
     //adjust radius
     if (inp.inputs.lclick && shapeBeingMade instanceof Circle) {
         const selectedRadius = shapeBeingMade.position.clone().subtract(inp.inputs.mouse.position).magnitude();
         shapeBeingMade.radius = selectedRadius < SMALLEST_RADIUS ? shapeBeingMade.radius : selectedRadius;
-    } 
-    //lesson 03 - adjust rectangle
+    }
+    //adjust rectangle
     else if (inp.inputs.lclick && shapeBeingMade instanceof Rectangle) {
         const selectionVector = shapeBeingMade.position.clone().subtract(inp.inputs.mouse.position).absolute();
         shapeBeingMade.width = selectionVector.x > SMALLEST_RADIUS ? selectionVector.x * 2 : SMALLEST_RADIUS * 2;
         shapeBeingMade.height = selectionVector.y > SMALLEST_RADIUS ? selectionVector.y * 2 : SMALLEST_RADIUS * 2;
     }
 
-    //add objects - lesson 03
+    //add objects
     if (shapeBeingMade && !inp.inputs.lclick) {
         addObject(shapeBeingMade);
         shapeBeingMade = null;
     }
 
     //move objects with mouse
-    if(!inp.inputs.lclick && inp.inputs.rclick && !inp.inputs.mouse.movedObject) {
+    if (!inp.inputs.lclick && inp.inputs.rclick && !inp.inputs.mouse.movedObject) {
         const closestObject = findClosestObject(objects, inp.inputs.mouse.position);
         inp.inputs.mouse.movedObject = closestObject == null ? null : closestObject;
     }
-    if(!inp.inputs.rclick || inp.inputs.lclick) {
+    if (!inp.inputs.rclick || inp.inputs.lclick) {
         inp.inputs.mouse.movedObject = null;
     }
-    if(inp.inputs.mouse.movedObject) {
+    if (inp.inputs.mouse.movedObject) {
         moveObjectWithMouse(inp.inputs.mouse.movedObject);
     }
 
-    //Lesson 03 - update object positions with velocity
-    for(let i=0; i<objects.length; i++) {
+    //update object positions with velocity
+    for (let i = 0; i < objects.length; i++) {
         objects[i].updateShape(dt);
     }
 
@@ -108,7 +108,7 @@ function findClosestObject(objects, vector) {
     let closestObject = null;
     let distance;
     let lowestDistance = 30;
-    for(let i=0; i<objects.length; i++) {
+    for (let i = 0; i < objects.length; i++) {
         distance = objects[i].shape.position.distanceTo(vector);
         if (distance < lowestDistance) {
             lowestDistance = distance;
@@ -124,9 +124,9 @@ function moveObjectWithMouse(object) {
 }
 
 function addObject(shape) {
-    const object = new RigidBody(shape);  
+    const object = new RigidBody(shape);
     objects.push(object);
-} 
+}
 
 //making vectors
 const origin = new Vec(100, 100);
