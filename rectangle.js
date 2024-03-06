@@ -57,10 +57,10 @@ export class Rectangle extends Shape {
         ctx.rotate(this.orientation);
         ctx.beginPath();
         ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height); // Corrected position
-        ctx.fillStyle = this.style?.fillColor ?? 'black'; // Default to black if fillColor is undefined
+        ctx.fillStyle = this.style.fillColor;
         ctx.fill();
-        ctx.strokeStyle = this.style?.borderColor ?? 'black'; // Default to black if borderColor is undefined
-        ctx.lineWidth = this.style?.lineWidth ?? 1; // Corrected default value
+        ctx.strokeStyle = this.style.borderColor;
+        ctx.lineWidth = this.style.lineWidth;
         ctx.stroke();
         ctx.restore();
     }

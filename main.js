@@ -20,9 +20,33 @@ const ctx = canv.getContext("2d");
 
 const renderer = new Renderer(canv, ctx);
 
+let lastMousePos = new Vec(0, 0);
+let currentMousePos = new Vec(0, 0);
+let mouseVelocity = new Vec(0, 0)
+
 const inp = new Input(canv, window, dt);
 inp.resizeCanvas();
 inp.addListeners();
+// Assuming 'inp' is your Input class instance
+inp.onMouseMove = (event) => {
+    // Update positions
+    lastMousePos = currentMousePos;
+    currentMousePos = new Vec(event.clientX, event.clientY);
+    
+    // Calculate velocity
+    mouseVelocity = currentMousePos.clone().subtract(lastMousePos);
+};
+// In your main script, after setting up the input system and other initializations
+canv.addEventListener('mouseup', () => {
+    if (shapeBeingMade) {
+        // Assuming mouseVelocity is updated on mousemove in the main script or via the Input class
+        shapeBeingMade.velocity = inp.inputs.mouse.velocity.clone();
+        shapeBeingMade = null; // Optionally reset shapeBeingMade if needed
+    }
+});
+
+
+;
 
 const col = new Collisions();
 const objects = [];
