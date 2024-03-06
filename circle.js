@@ -1,12 +1,12 @@
 import { Shape } from './Shape.js';
 import { Style } from './Style.js';
-import { RigidBody } from './rigidBody.js';
+
 
 export class Circle extends Shape {
     constructor(position, radius = 0, style = new Style()) {
         super(position, style); // Correctly pass position and style to the Shape constructor
         this.radius = radius; // Initialize radius
-        this.rigidBody = new RigidBody(this); // Use RigidBody instance directly
+        
     }
 
     draw(ctx) {
