@@ -12,7 +12,8 @@ const SMALLEST_RADIUS = 10;
 const LOWEST_DISTANCE_MOVING_OBJ = 30;
 const dt = 1 / 60; // Time per frame, for consistent movement and physics calculations
 
-
+// Assuming Style class is properly imported or defined
+let defaultStyle = new Style('black', 'red', 3); // default style
 
 const canv = document.getElementById("canvas");
 const ctx = canv.getContext("2d");
@@ -42,11 +43,11 @@ function updateAndDraw() {
 
     //make objects
     if (inp.inputs.lclick && shapeBeingMade == null) {
-        //lesson 03 - make rectangles with mouse
+        //make rectangles & circles with mouse
         if (shapeSelected == 'c') {
-            shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, 0);
+            shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, defaultStyle);
         } else if (shapeSelected == 'r') {
-            shapeBeingMade = new Rectangle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS*2, SMALLEST_RADIUS*2);
+            shapeBeingMade = new Rectangle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS*2, SMALLEST_RADIUS*2, defaultStyle);
         }
         
     }
@@ -97,7 +98,7 @@ function updateAndDraw() {
     renderer.drawFrame(objects);
     //draw shape
     if (shapeBeingMade) {
-        shapeBeingMade.draw(ctx, bordCol, null);
+        shapeBeingMade.draw(ctx); // Style is already assigned to the shape, no need for extra parameters
     }
 
 }
