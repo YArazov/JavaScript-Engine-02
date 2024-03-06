@@ -17,26 +17,23 @@ export class Renderer {
         this.ctx.imageSmoothingEnabled = false;
     }
 
-    drawFrame(objects, fillCol, bordCol) {
-        // First, clear the canvas to prepare for new drawings
+    drawFrame(objects) {
         this.clearFrame();
-
-        // Draw each object and its AABB
+    
+        // Assuming each object has a shape with a draw method that handles its own styling
         objects.forEach(object => {
-            object.shape.draw(this.ctx, fillCol, bordCol);
-            // Assuming shape.aabb.draw() method exists and works similarly to the 'Rect' project
-            object.shape.aabb.draw(this.ctx, "red");
+            object.shape.draw(this.ctx); // The draw method uses the shape's own style
         });
 
         // Draw temporary objects and clear the list afterward
         this.renderedNextFrame.forEach(tempObject => {
-            tempObject.draw(this.ctx, fillCol, bordCol);
+            tempObject.shape.draw(this.ctx);
         });
         this.renderedNextFrame = [];
 
         // Draw persistent objects, do not clear the list
         this.renderedAlways.forEach(alwaysObject => {
-            alwaysObject.draw(this.ctx, fillCol, bordCol);
+            alwaysObject.shape.draw(this.ctx);
         });
     }
 
