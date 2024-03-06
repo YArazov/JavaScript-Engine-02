@@ -61,25 +61,27 @@ export class Input {
 
     // Handles mouse movement, updating position and velocity
     mouseMove(e) {
+        // Reset velocity to 0 after 100ms of inactivity
+        this.window.clearTimeout(this.inputs.mouseTimer);
+
         const x = e.pageX - this.canv.offsetLeft;
         const y = e.pageY - this.canv.offsetTop;
 
         const dx = x - this.inputs.mouse.position.x;
         const dy = y - this.inputs.mouse.position.y;
 
-        // Update velocity based on delta time
+        // Update velocity based on delta time (change in time)
         this.inputs.mouse.velocity.x = dx / this.dt;
         this.inputs.mouse.velocity.y = dy / this.dt;
 
         this.inputs.mouse.position.x = x;
         this.inputs.mouse.position.y = y;
 
-        // Reset velocity to 0 after 100ms of inactivity
-        this.window.clearTimeout(this.inputs.mouseTimer);
-        this.inputs.mouseTimer = this.window.setTimeout(() => {
-            this.inputs.mouse.velocity.x = 0;
+        
+        this.inputs.mouseTimer = this.window.setTimeout(function () {
+            this.inputs.mouse.velocity.x = 0; 
             this.inputs.mouse.velocity.y = 0;
-        }, 100);
+        }.bind(this), 100);
     }
 
     // Adjusts canvas size on window resize
