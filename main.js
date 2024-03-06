@@ -46,7 +46,7 @@ function updateAndDraw() {
         if (shapeSelected == 'c') {
             shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, 0);
         } else if (shapeSelected == 'r') {
-            shapeBeingMade = new Rect(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS*2, SMALLEST_RADIUS*2);
+            shapeBeingMade = new Rectangle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS*2, SMALLEST_RADIUS*2);
         }
         
     }
@@ -56,7 +56,7 @@ function updateAndDraw() {
         shapeBeingMade.radius = selectedRadius < SMALLEST_RADIUS ? shapeBeingMade.radius : selectedRadius;
     } 
     //lesson 03 - adjust rectangle
-    else if (inp.inputs.lclick && shapeBeingMade instanceof Rect) {
+    else if (inp.inputs.lclick && shapeBeingMade instanceof Rectangle) {
         const selectionVector = shapeBeingMade.position.clone().subtract(inp.inputs.mouse.position).absolute();
         shapeBeingMade.width = selectionVector.x > SMALLEST_RADIUS ? selectionVector.x * 2 : SMALLEST_RADIUS * 2;
         shapeBeingMade.height = selectionVector.y > SMALLEST_RADIUS ? selectionVector.y * 2 : SMALLEST_RADIUS * 2;
@@ -94,7 +94,7 @@ function updateAndDraw() {
 
     //draw objects
     renderer.clearFrame();
-    renderer.drawFrame(objects, fillCol, bordCol);
+    renderer.drawFrame(objects);
     //draw shape
     if (shapeBeingMade) {
         shapeBeingMade.draw(ctx, bordCol, null);

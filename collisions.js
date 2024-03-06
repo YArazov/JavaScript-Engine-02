@@ -3,11 +3,21 @@ import { Rectangle } from "./rectangle.js";
 
 export class Collisions {
     constructor() {
+        this.possibleCollisions = [];
         this.collisions = [];
     }
 
     clearCollisions() {
+        this.possibleCollisions = [];
         this.collisions = []; //reset it (assigns it to empty array)
+    }
+
+    broadPhazeDetection (objects) {
+        for (let i = 0; i < objects.length; i++) {
+            for (let j = i +1; j < objects.length; j++) {
+                this.detectAabbCollision(objects[i], objects[j]);
+            }
+        }
     }
 
     narrowPhazeDetection(objects) {
@@ -80,7 +90,7 @@ export class Collisions {
             console.log('false');
         }
     }
-    
+
     pushOffObjects(obj1, obj2, overlap, normal) {
         obj1.shape.position.subtract(normal.clone().multiply(overlap / 2));
         obj2.shape.position.add(normal.clone().multiply(overlap / 2));
