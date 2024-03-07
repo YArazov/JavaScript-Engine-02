@@ -101,7 +101,7 @@ export class Vec {
 		return this.clone().subtract(v).magnitude();
 	}
 
-	draw(ctx, strokeColor) {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 
+	draw(ctx, strokeColor = 'black') {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 
 		if (this.color) {
 			ctx.strokeStyle = this.color;
 		} else {
