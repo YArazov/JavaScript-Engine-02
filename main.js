@@ -89,7 +89,7 @@ function updateAndDraw() {
     //COLLISIONS
     col.clearCollisions();
     col.broadPhazeDetection(objects);
-    // console.log(col.possibleCollisions.length);
+    console.log(col.possibleCollisions.length);
     col.narrowPhazeDetection(objects);  //detect all possible collisions
     col.resolveCollisions();    //push off
 

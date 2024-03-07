@@ -84,11 +84,11 @@ export class Collisions {
                             bottom1 >= top2 &&
                             top1 <= bottom2;
     
-        // if (isColliding) {
-        //     console.log('true');
-        // } else {
-        //     console.log('false');
-        // }
+        if (isColliding) {
+            console.log('true');
+        } else {
+            console.log('false');
+        }
     }
 
     pushOffObjects(obj1, obj2, overlap, normal) {
