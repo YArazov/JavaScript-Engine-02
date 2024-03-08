@@ -5,7 +5,7 @@ import { Input } from './input.js';
 import { RigidBody } from './rigidBody.js';
 import { Collisions } from './collisions.js';
 import { Vec } from './vector.js';
-import { Style } from './Style.js';
+import { Style } from './style.js';
 
 // Setup constants and utility functions
 const SMALLEST_RADIUS = 10;
@@ -156,37 +156,30 @@ const origin2 = new Vec(600, 400);
 const origin3 = new Vec(670, 600);
 const origin4 = new Vec(600, 700);
 
-ctx.fillText("Vector Addition", 50, 50);
 const vector3 = new Vec(-100, 100);
 vector3.renderOrigin = origin2;
 vector3.color = "purple";
 
-ctx.fillText("Vector Addition", 50, 50);
 const vector4 = new Vec(-100, -100);
 vector4.renderOrigin = origin2;
 vector4.color = "green";
 
-ctx.fillText("Vector Addition", 50, 50);
 const differenceVector = vector3.clone().subtract(vector4);
 differenceVector.renderOrigin = origin2;
 differenceVector.color = "yellow";
 
-ctx.fillText("Vector Addition", 50, 50);
 const vector5 = new Vec(200, -200);
 vector5.renderOrigin = origin3;
 vector5.color = "red";
 
-ctx.fillText("Vector Addition", 50, 50);
 const multVector = vector5.clone().multiply(2);
 multVector.renderOrigin = origin3;
 multVector.color = "red";
 
-ctx.fillText("Vector Addition", 50, 50);
 const vector6 = new Vec(-200,200);
 vector6.renderOrigin = origin4;
 vector6.color = "blue";
 
-ctx.fillText("Vector Addition", 50, 50);
 const rotateVector = vector6.clone().rotate(Math.PI * -0.5);
 rotateVector.renderOrigin = origin4;
 rotateVector.color = "blue"

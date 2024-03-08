@@ -1,6 +1,6 @@
 import { Aabb } from './aabb.js';
-import { Shape } from './Shape.js';
-import { Style } from './Style.js';
+import { Shape } from './shape.js';
+import { Style } from './style.js';
 import { Vec } from './vector.js';
 
 
