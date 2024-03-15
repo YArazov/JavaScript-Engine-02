@@ -111,10 +111,12 @@ export class Vec {
         ctx.lineWidth = 3;
 		const renderEnd = this.renderOrigin.clone().add(this);
 		//line from vector tail to vector head (head is arrow part)
+
 		ctx.beginPath();	//start draw
 		ctx.moveTo(this.renderOrigin.x, this.renderOrigin.y);	//where to start draw (vectors start at origin)
 		ctx.lineTo(renderEnd.x, renderEnd.y);	//to create a strait line
 		ctx.stroke();
+		
 		//circle at vector head
 		ctx.beginPath();
         ctx.arc(renderEnd.x, renderEnd.y, 5, 0, Math.PI*2, true);	//radius 5
