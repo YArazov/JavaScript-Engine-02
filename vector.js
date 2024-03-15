@@ -141,29 +141,24 @@ export class Vec {
 
 	draw(ctx, strokeColor) {
 		if (this.color) {
-			strokeColor = this.color;
+			ctx.strokeColor = this.color;
+		}	else {
+			ctx.strokeStyle = strokeColor;
 		}
-		if(this.renderOrigin) {
+			ctx.lineWidth = 3;
 			const renderEnd = this.renderOrigin.clone().add(this);
 			ctx.beginPath();
 			ctx.moveTo(this.renderOrigin.x, this.renderOrigin.y);
 			ctx.lineTo(renderEnd.x, renderEnd.y);
-			ctx.lineWidth = 3;
-			ctx.strokeStyle = strokeColor;
+			
 			ctx.stroke();
+
+			//circle at vector head
 			ctx.beginPath();
 			ctx.arc(renderEnd.x, renderEnd.y, 5, 0, Math.PI*2, true);	//radius 5
 			ctx.closePath();
-			ctx.strokeStyle = strokeColor;
-			ctx.lineWidth = 3;
+
 			ctx.stroke();
-		} else {
-			ctx.beginPath();
-			ctx.arc(this.x, this.y, 5, 0, Math.PI*2, true);	//radius 5
-			ctx.closePath();
-			ctx.strokeStyle = strokeColor;
-			ctx.lineWidth = 3;
-			ctx.stroke();
-		}
+		
 	}
 }
