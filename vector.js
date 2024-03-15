@@ -87,6 +87,20 @@ export class Vec {
 		this.y = x * Math.sin(angle) + y * Math.cos(angle);
 		return this;
 	}
+
+	rotateCW90() {	//simple rotate for vector clock-wise 90 degrees
+		const x = this.x;	
+		this.x = -this.y;
+		this.y = x;
+		return this;
+	}
+
+	rotateCCW90() {	//simple rotate for vector counter-clock-wise 90 degrees
+		const x = this.x;	
+		this.x = this.y;
+		this.y = -x;
+		return this;
+	}
 	
 	//non-chainable
 	clone () {	//create a new vector with xy of this
@@ -99,6 +113,30 @@ export class Vec {
 
 	distanceTo (v) {
 		return this.clone().subtract(v).magnitude();
+	}
+
+	dotProduct(v) {
+		return this.x * v.x + this.y * v.y;
+	}
+
+	invert() {
+		this.x *= -1;	//makes vector that is opposite to other vector
+		this.y *= -1;
+		return this;
+	}
+
+	invertX() {
+		this.x *= -1;
+		return this;
+	}
+
+	invertY() {
+		this.y *= -1;
+		return this;
+	}
+
+	moveDistanceInDirection (distance, direction) {	//direction is a unit vector
+		this.add(direction.clone().multiply(distance));
 	}
 
 	draw(ctx, strokeColor = 'black') {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 
@@ -116,7 +154,7 @@ export class Vec {
 		ctx.moveTo(this.renderOrigin.x, this.renderOrigin.y);	//where to start draw (vectors start at origin)
 		ctx.lineTo(renderEnd.x, renderEnd.y);	//to create a strait line
 		ctx.stroke();
-		
+
 		//circle at vector head
 		ctx.beginPath();
         ctx.arc(renderEnd.x, renderEnd.y, 5, 0, Math.PI*2, true);	//radius 5
