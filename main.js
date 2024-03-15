@@ -17,7 +17,7 @@ let defaultStyle = new Style('black', 'red', 3); // default style
 const canv = document.getElementById("canvas");
 const ctx = canv.getContext("2d");
 
-const renderer = new Renderer(canv, ctx);
+export const renderer = new Renderer(canv, ctx);    //export renderer, is in collision
 
 const inp = new Input(canv, window, dt);
 inp.resizeCanvas();

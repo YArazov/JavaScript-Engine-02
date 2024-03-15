@@ -1,5 +1,6 @@
 import { Circle } from "./circle.js";
 import { Rectangle } from "./rectangle.js";
+import { renderer } from "./main.js";
 
 export class Collisions {
     constructor() {
@@ -12,9 +13,9 @@ export class Collisions {
         this.collisions = []; //reset it (assigns it to empty array)
     }
 
-    broadPhazeDetection (objects) {
+    broadPhazeDetection(objects) {
         for (let i = 0; i < objects.length; i++) {
-            for (let j = i +1; j < objects.length; j++) {
+            for (let j = i + 1; j < objects.length; j++) {
                 this.detectAabbCollision(objects[i], objects[j]);
             }
         }
@@ -22,12 +23,16 @@ export class Collisions {
 
     narrowPhazeDetection(objects) {
         for (let i = 0; i < objects.length; i++) {
-            for (let j = i + 1; j < objects.length; j++) {  
+            for (let j = i + 1; j < objects.length; j++) {
                 if (j > i) {
                     if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
                         this.detectCollisionCircleCircle(objects[i], objects[j]);
-                    }   else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
+                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
                         this.detectCollisionRectangleRectangle(objects[i], objects[j]);
+                    } else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
+                        this.findClosestVertex(objects[j].shape.vertices, objects[i].shape.position);
+                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Circle) {
+                        this.findClosestVertex(objects[i].shape.vertices, objects[j].shape.position);
                     }
                 }
             }
@@ -66,24 +71,24 @@ export class Collisions {
     detectCollisionRectangleRectangle(obj1, obj2) {
         const rect1 = obj1.shape;
         const rect2 = obj2.shape;
-    
+
         // Calculate the left, right, top, and bottom of each rectangle
         const left1 = rect1.position.x - rect1.width / 2;
         const right1 = rect1.position.x + rect1.width / 2;
         const top1 = rect1.position.y - rect1.height / 2;
         const bottom1 = rect1.position.y + rect1.height / 2;
-    
+
         const left2 = rect2.position.x - rect2.width / 2;
         const right2 = rect2.position.x + rect2.width / 2;
         const top2 = rect2.position.y - rect2.height / 2;
         const bottom2 = rect2.position.y + rect2.height / 2;
-    
+
         // Check for overlap
         const isColliding = right1 >= left2 &&
-                            left1 <= right2 &&
-                            bottom1 >= top2 &&
-                            top1 <= bottom2;
-    
+            left1 <= right2 &&
+            bottom1 >= top2 &&
+            top1 <= bottom2;
+
         if (isColliding) {
             console.log('true');
         } else {
@@ -104,5 +109,20 @@ export class Collisions {
             [obj1, obj2] = collidedPair;
             this.pushOffObjects(obj1, obj2, overlap, normal);
         }
+    }
+
+    findClosestVertex(vertices, center) {
+        let minDistance = Number.MAX_VALUE;
+        let vertexDistance, closestVertex;
+
+        for (let i = 0; i < vertices.length; i++) {
+            vertexDistance = vertices[i].distanceTo(center);
+            if (vertexDistance < minDistance) {
+                minDistance = vertexDistance;
+                closestVertex = vertices[i];
+            }
+        }
+        renderer.renderedNextFrame.push(closestVertex); //add closest vertex to renderer array
+        return closestVertex;
     }
 }
