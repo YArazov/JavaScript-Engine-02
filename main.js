@@ -4,6 +4,7 @@ import {Rect} from './rectangle.js';
 import {Input} from './input.js';
 import {RigidBody} from './rigidBody.js';
 import {Collisions} from './collisions.js';
+import {Aabb} from './aabb.js';
 
 const SMALLEST_RADIUS = 10;
 const dt = 1/60;    //time per frame
