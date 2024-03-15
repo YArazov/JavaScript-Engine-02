@@ -19,7 +19,6 @@ const ctx = canv.getContext("2d");
 
 const renderer = new Renderer(canv, ctx);
 
-
 const inp = new Input(canv, window, dt);
 inp.resizeCanvas();
 inp.addListeners();
@@ -89,7 +88,7 @@ function updateAndDraw() {
     //COLLISIONS
     col.clearCollisions();
     col.broadPhazeDetection(objects);
-    console.log(col.possibleCollisions.length);
+    // console.log(col.possibleCollisions.length);
     col.narrowPhazeDetection(objects);  //detect all possible collisions
     col.resolveCollisions();    //push off
 
@@ -100,15 +99,6 @@ function updateAndDraw() {
     if (shapeBeingMade) {
         shapeBeingMade.draw(ctx); // Style is already assigned to the shape, no need for extra parameters
     }
-
-    //assignment6
-    ctx.font = "20px serif";
-    ctx.fillStyle = 'red';
-    ctx.fillText("Vector Multiplication", 725, 350);
-    ctx.fillStyle = 'purple';
-    ctx.fillText("Vector Subtraction", 375, 400);
-    ctx.fillStyle = 'blue';
-    ctx.fillText("Vector Rotation", 550, 800);
 }
 let renderInterval = setInterval(updateAndDraw, 1000 / 60);
 
@@ -136,52 +126,3 @@ function addObject(shape) {
     objects.push(object);
 }
 
-//making vectors
-const origin = new Vec(200, 100);
-
-const vector1 = new Vec(50, 60);
-vector1.renderOrigin = origin;
-vector1.color = "red";
-
-const vector2 = new Vec(-50, 60);
-vector2.renderOrigin = origin;
-vector2.color = "blue";
-
-const testVector = vector1.clone().add(vector2);
-testVector.renderOrigin = origin;
-
-
-//assignment 6
-const origin2 = new Vec(600, 400);
-const origin3 = new Vec(670, 600);
-const origin4 = new Vec(600, 700);
-
-const vector3 = new Vec(-100, 100);
-vector3.renderOrigin = origin2;
-vector3.color = "purple";
-
-const vector4 = new Vec(-100, -100);
-vector4.renderOrigin = origin2;
-vector4.color = "green";
-
-const differenceVector = vector3.clone().subtract(vector4);
-differenceVector.renderOrigin = origin2;
-differenceVector.color = "yellow";
-
-const vector5 = new Vec(200, -200);
-vector5.renderOrigin = origin3;
-vector5.color = "red";
-
-const multVector = vector5.clone().multiply(2);
-multVector.renderOrigin = origin3;
-multVector.color = "red";
-
-const vector6 = new Vec(-200,200);
-vector6.renderOrigin = origin4;
-vector6.color = "blue";
-
-const rotateVector = vector6.clone().rotate(Math.PI * -0.5);
-rotateVector.renderOrigin = origin4;
-rotateVector.color = "blue"
-
-renderer.renderedAlways.push(vector1, vector2, vector3, vector4, vector5, vector6, differenceVector, multVector, rotateVector, testVector);
