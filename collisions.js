@@ -21,7 +21,7 @@ export class Collisions {
         }
     }
 
-    narrowPhazeDetection(objects) {
+    narrowPhaseDetection(objects) {
         for (let i = 0; i < objects.length; i++) {
             for (let j = i + 1; j < objects.length; j++) {
                 if (j > i) {
@@ -101,25 +101,24 @@ export class Collisions {
     }
 
     detectCollisionCirclePolygon(circle, polygon) {
+        // Revised logic for clarity and correctness
         const vertices = polygon.shape.vertices;
         const circleShape = circle.shape;
-        let overlap, normal, axis;
-
-        overlap = Number.MAX_VALUE;
+        let overlap = Number.MAX_VALUE;
+        let normal, axis;
 
         for (let i = 0; i < vertices.length; i++) {
             const v1 = vertices[i];
             const v2 = vertices[(i + 1) % vertices.length];
             axis = v2.clone().subtract(v1).rotateCCW90().normalize();
+
             const [min1, max1] = this.projectVertices(vertices, axis);
             const [min2, max2] = this.projectCircle(circleShape.position, circleShape.radius, axis);
-            if (min2 >= max1 || min1 >= max2) {
-                // no collision
-                return;
-            }
 
-            const axisOverlap = Math.min(max2 - min1, max1 - min2); // finds smallest overlap
-            if (overlap >= axisOverlap) {
+            if (min2 >= max1 || min1 >= max2) return;
+
+            const axisOverlap = Math.min(max2 - min1, max1 - min2);
+            if (axisOverlap < overlap) {
                 overlap = axisOverlap;
                 normal = axis;
             }
@@ -130,26 +129,25 @@ export class Collisions {
 
         const [min1, max1] = this.projectVertices(vertices, axis);
         const [min2, max2] = this.projectCircle(circleShape.position, circleShape.radius, axis);
-        if (min1 >= max2 || min2 >= max1) {
-            return;
-        }
 
-        const axisOverlap = Math.min(max2 - min1, max1 - min2);
-        if (axisOverlap < overlap) {
-            overlap = axisOverlap;
-            normal = axis;
-        }
+        if (!(min1 >= max2 || min2 >= max1)) {
+            const axisOverlap = Math.min(max2 - min1, max1 - min2);
+            if (axisOverlap < overlap) {
+                overlap = axisOverlap;
+                normal = axis;
+            }
 
-        const vec1to2 = polygon.shape.position.clone().subtract(circle.shape.position);
-        if (normal.dot(vec1to2) < 0) {
-            normal.invert();
-        }
+            const vec1to2 = polygon.shape.position.clone().subtract(circle.shape.position);
+            if (normal.dot(vec1to2) < 0) {
+                normal.invert();
+            }
 
-        this.collisions.push({
-            collidedPair: [circle, polygon],
-            overlap: overlap,
-            normal: normal
-        });
+            this.collisions.push({
+                collidedPair: [circle, polygon],
+                overlap: overlap,
+                normal: normal
+            });
+        }
     }
 
     projectVertices(vertices, axis) {
