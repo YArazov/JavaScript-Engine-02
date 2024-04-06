@@ -29,11 +29,12 @@ export class Collisions {
                         this.detectCollisionCircleCircle(objects[i], objects[j]);
                     } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
                         this.detectCollisionRectangleRectangle(objects[i], objects[j]);
-
                     } else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
                         this.detectCollisionCirclePolygon(objects[i], objects[j]);
                     } else if (objects[j].shape instanceof Circle && objects[i].shape instanceof Rectangle) {
                         this.detectCollisionCirclePolygon(objects[j], objects[i]);
+                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
+                        this.detectCollisionPolygonPolygon(objects[i], objects[j]);
                     }
                 }
             }
@@ -147,6 +148,21 @@ export class Collisions {
         }
     }
 
+    detectCollisionPolygonPolygon(obj1, obj2) {
+        const vertices1 = obj1.shape.vertices;
+        const vertices2 = obj2.shape.vertices;
+        let overlap = Number.MAX_VALUE;
+        let normal, axis;
+
+
+        const edges1 = this.calculateEdges(vertices1);
+        const axes1 = [];
+        for (let i = 0; i < edges1.length; i++) {
+            axes1.push(edges1.rotatesCCW90().normalize());
+        }
+     
+    }
+
     projectVertices(vertices, axis) {
         let min = vertices[0].dot(axis), max = min;
 
@@ -175,6 +191,22 @@ export class Collisions {
         }
 
         return [min, max];
+    }
+
+    
+
+    calculateEdges(vertices) {
+        const edges = [];
+        for (let i = 0; i < vertices.length; i++) {
+            const v1 = vertices[i];
+            const v2 = vertices[(i + 1) % vertices.length];
+            edges.push( v2.clone().subtract(v1));
+        }
+        return edges;
+    }
+
+    calculateOverlap() {
+
     }
 
     pushOffObjects(obj1, obj2, overlap, normal) {
