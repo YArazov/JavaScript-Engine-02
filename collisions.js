@@ -21,25 +21,20 @@ export class Collisions {
         }
     }
 
-    narrowPhaseDetection(objects) {
-        for (let i = 0; i < objects.length; i++) {
-            for (let j = i + 1; j < objects.length; j++) {
-                if (j > i) {
-                    if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
-                        this.detectCollisionCircleCircle(objects[i], objects[j]);
-                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
-                        this.detectCollisionRectangleRectangle(objects[i], objects[j]);
-                    } else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
-                        this.findClosestVertex(objects[j].shape.vertices, objects[i].shape.position);
-                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Circle) {
-                        this.findClosestVertex(objects[i].shape.vertices, objects[j].shape.position);
-                    } else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
-                        this.detectCollisionCirclePolygon(objects[i], objects[j]);
-                    } else if (objects[j].shape instanceof Circle && objects[i].shape instanceof Rectangle) {
-                        this.detectCollisionCirclePolygon(objects[i], objects[j]);
-                    }
-                }
+    narrowPhaseDetection() {
+        let o1, o2;
+        for(let i=0; i<this.possibleCollisions.length; i++) {
+            o1 = this.possibleCollisions[i][0];
+            o2 = this.possibleCollisions[i][1];
+            
+            if (o1.shape instanceof Circle && o2.shape instanceof Circle) {
+                this.detectCollisionCircleCircle(o1, o2);
+            } else if ((o1.shape instanceof Circle && o2.shape instanceof Rectangle)) {
+                this.detectCollisionCirclePolygon(o1, o2);
+            } else if ((o2.shape instanceof Circle && o1.shape instanceof Rectangle)) {
+                this.detectCollisionCirclePolygon(o2, o1);
             }
+            
         }
     }
 
@@ -138,7 +133,7 @@ export class Collisions {
             }
 
             const vec1to2 = polygon.shape.position.clone().subtract(circle.shape.position);
-            if (normal.dot(vec1to2) < 0) {
+            if (normal.dotProduct(vec1to2) < 0) {
                 normal.invert();
             }
 
@@ -151,10 +146,10 @@ export class Collisions {
     }
 
     projectVertices(vertices, axis) {
-        let min = vertices[0].dot(axis), max = min;
+        let min = vertices[0].dotProduct(axis), max = min;
 
         for (let i = 1; i < vertices.length; i++) {
-            const proj = vertices[i].dot(axis);
+            const proj = vertices[i].dotProduct(axis);
             if (proj < min) {
                 min = proj;
             }
@@ -169,8 +164,9 @@ export class Collisions {
     projectCircle(center, radius, axis) {
         let min, max;
         const points = [center.clone().moveDistanceInDirection(radius, axis), center.clone().moveDistanceInDirection(-radius, axis)];   // points on circle
-        min = points[0].dot(axis);
-        max = points[1].dot(axis);
+        console.log(points);    //undefined - needs debugging
+        min = points[0].dotProduct(axis);
+        max = points[1].dotProduct(axis);
         if (min > max) {
             const temp = min;   //swapping min and max values
             min = max;
@@ -191,6 +187,7 @@ export class Collisions {
         for (let i = 0; i < this.collisions.length; i++) {
             ({ collidedPair, overlap, normal } = this.collisions[i]);
             [obj1, obj2] = collidedPair;
+            // console.log(obj1, obj2);
             this.pushOffObjects(obj1, obj2, overlap, normal);
         }
     }
