@@ -21,20 +21,22 @@ export class Collisions {
         }
     }
 
-    narrowPhaseDetection() {
-        let o1, o2;
-        for(let i=0; i<this.possibleCollisions.length; i++) {
-            o1 = this.possibleCollisions[i][0];
-            o2 = this.possibleCollisions[i][1];
-            
-            if (o1.shape instanceof Circle && o2.shape instanceof Circle) {
-                this.detectCollisionCircleCircle(o1, o2);
-            } else if ((o1.shape instanceof Circle && o2.shape instanceof Rectangle)) {
-                this.detectCollisionCirclePolygon(o1, o2);
-            } else if ((o2.shape instanceof Circle && o1.shape instanceof Rectangle)) {
-                this.detectCollisionCirclePolygon(o2, o1);
+    narrowPhaseDetection(objects) {
+        for (let i = 0; i < objects.length; i++) {
+            for (let j = i + 1; j < objects.length; j++) {
+                if (j > i) {
+                    if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
+                        this.detectCollisionCircleCircle(objects[i], objects[j]);
+                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
+                        this.detectCollisionRectangleRectangle(objects[i], objects[j]);
+
+                    } else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
+                        this.detectCollisionCirclePolygon(objects[i], objects[j]);
+                    } else if (objects[j].shape instanceof Circle && objects[i].shape instanceof Rectangle) {
+                        this.detectCollisionCirclePolygon(objects[j], objects[i]);
+                    }
+                }
             }
-            
         }
     }
 
@@ -113,7 +115,7 @@ export class Collisions {
             if (min2 >= max1 || min1 >= max2) return;
 
             const axisOverlap = Math.min(max2 - min1, max1 - min2);
-            if (axisOverlap < overlap) {
+            if (axisOverlap <= overlap) {
                 overlap = axisOverlap;
                 normal = axis;
             }
@@ -140,7 +142,7 @@ export class Collisions {
             this.collisions.push({
                 collidedPair: [circle, polygon],
                 overlap: overlap,
-                normal: normal
+                normal: normal,
             });
         }
     }

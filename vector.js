@@ -115,7 +115,7 @@ export class Vec {
 		return this.clone().subtract(v).magnitude();
 	}
 
-	dotProduct(v) {
+	dot(v) {
 		return this.x * v.x + this.y * v.y;
 	}
 
@@ -135,10 +135,17 @@ export class Vec {
 		return this;
 	}
 
-	moveDistanceInDirection(distance, direction) {	//direction is a unit vector
+	moveDistanceInDirection(distance, direction) { // direction is a unit vector
 		this.add(direction.clone().multiply(distance));
+		return this; // Ensure chainability by returning the instance
 	}
-
+	
+	getMovedDistanceInDirection(distance, direction) {
+		// Returns a new Vec instance that represents the position after moving
+		// Does not mutate the current Vec instance
+		return this.clone().add(direction.clone().multiply(distance));
+	}
+	
 	draw(ctx, strokeColor = 'black') {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 
 		if (this.color) {
 			ctx.strokeStyle = this.color;
