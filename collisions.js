@@ -135,7 +135,7 @@ export class Collisions {
             }
 
             const vec1to2 = polygon.shape.position.clone().subtract(circle.shape.position);
-            if (normal.dotProduct(vec1to2) < 0) {
+            if (normal.dot(vec1to2) < 0) {
                 normal.invert();
             }
 
@@ -148,10 +148,10 @@ export class Collisions {
     }
 
     projectVertices(vertices, axis) {
-        let min = vertices[0].dotProduct(axis), max = min;
+        let min = vertices[0].dot(axis), max = min;
 
         for (let i = 1; i < vertices.length; i++) {
-            const proj = vertices[i].dotProduct(axis);
+            const proj = vertices[i].dot(axis);
             if (proj < min) {
                 min = proj;
             }
@@ -166,9 +166,8 @@ export class Collisions {
     projectCircle(center, radius, axis) {
         let min, max;
         const points = [center.clone().moveDistanceInDirection(radius, axis), center.clone().moveDistanceInDirection(-radius, axis)];   // points on circle
-        console.log(points);    //undefined - needs debugging
-        min = points[0].dotProduct(axis);
-        max = points[1].dotProduct(axis);
+        min = points[0].dot(axis);
+        max = points[1].dot(axis);
         if (min > max) {
             const temp = min;   //swapping min and max values
             min = max;
@@ -189,7 +188,6 @@ export class Collisions {
         for (let i = 0; i < this.collisions.length; i++) {
             ({ collidedPair, overlap, normal } = this.collisions[i]);
             [obj1, obj2] = collidedPair;
-            // console.log(obj1, obj2);
             this.pushOffObjects(obj1, obj2, overlap, normal);
         }
     }
