@@ -29,14 +29,11 @@ export class Collisions {
                         this.detectCollisionCircleCircle(objects[i], objects[j]);
                     } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
                         this.detectCollisionRectangleRectangle(objects[i], objects[j]);
-                    } else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
-                        this.findClosestVertex(objects[j].shape.vertices, objects[i].shape.position);
-                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Circle) {
-                        this.findClosestVertex(objects[i].shape.vertices, objects[j].shape.position);
+
                     } else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
                         this.detectCollisionCirclePolygon(objects[i], objects[j]);
                     } else if (objects[j].shape instanceof Circle && objects[i].shape instanceof Rectangle) {
-                        this.detectCollisionCirclePolygon(objects[i], objects[j]);
+                        this.detectCollisionCirclePolygon(objects[j], objects[i]);
                     }
                 }
             }
@@ -118,7 +115,7 @@ export class Collisions {
             if (min2 >= max1 || min1 >= max2) return;
 
             const axisOverlap = Math.min(max2 - min1, max1 - min2);
-            if (axisOverlap < overlap) {
+            if (axisOverlap <= overlap) {
                 overlap = axisOverlap;
                 normal = axis;
             }
@@ -145,7 +142,7 @@ export class Collisions {
             this.collisions.push({
                 collidedPair: [circle, polygon],
                 overlap: overlap,
-                normal: normal
+                normal: normal,
             });
         }
     }
