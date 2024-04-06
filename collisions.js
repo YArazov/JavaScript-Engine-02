@@ -154,13 +154,21 @@ export class Collisions {
         let overlap = Number.MAX_VALUE;
         let normal, axis;
 
+        vector1to2 = obj2.shape.position.clone().subtract(obj1.shape.position);
 
         const edges1 = this.calculateEdges(vertices1);
         const axes1 = [];
         for (let i = 0; i < edges1.length; i++) {
             axes1.push(edges1.rotatesCCW90().normalize());
         }
-     
+        //check if axes are not on the back side of rectangle
+        for (let i = 0; i < axes1.length; i++) {
+            if (axes1[i].dot(vector1to2) < 0) {
+                //axes is in the wrong direction, i.e it is on the backside of rectangle
+
+            }
+            //calculate overlap on axes
+        } 
     }
 
     projectVertices(vertices, axis) {
@@ -193,14 +201,14 @@ export class Collisions {
         return [min, max];
     }
 
-    
+
 
     calculateEdges(vertices) {
         const edges = [];
         for (let i = 0; i < vertices.length; i++) {
             const v1 = vertices[i];
             const v2 = vertices[(i + 1) % vertices.length];
-            edges.push( v2.clone().subtract(v1));
+            edges.push(v2.clone().subtract(v1));
         }
         return edges;
     }
