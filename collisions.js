@@ -24,18 +24,18 @@ export class Collisions {
     narrowPhaseDetection(objects) {
         for (let i = 0; i < objects.length; i++) {
             for (let j = i + 1; j < objects.length; j++) {
-                if (j > i) {
-                    if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
-                        this.detectCollisionCircleCircle(objects[i], objects[j]);
-                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
-                        this.detectCollisionRectangleRectangle(objects[i], objects[j]);
-                    } else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
-                        this.detectCollisionCirclePolygon(objects[i], objects[j]);
-                    } else if (objects[j].shape instanceof Circle && objects[i].shape instanceof Rectangle) {
-                        this.detectCollisionCirclePolygon(objects[j], objects[i]);
-                    } else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
-                        this.detectCollisionPolygonPolygon(objects[i], objects[j]);
-                    }
+
+                if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
+                    this.detectCollisionCircleCircle(objects[i], objects[j]);
+                }  
+                else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
+                    this.detectCollisionCirclePolygon(objects[i], objects[j]);
+                } 
+                else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Circle) {
+                    this.detectCollisionCirclePolygon(objects[j], objects[i]);
+                }
+                 else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
+                    this.detectCollisionPolygonPolygon(objects[i], objects[j]);
                 }
             }
         }
@@ -65,36 +65,6 @@ export class Collisions {
                 overlap: overlap,
                 normal: normal
             })
-        }
-    }
-
-    //  detect rectangles collisions
-
-    detectCollisionRectangleRectangle(obj1, obj2) {
-        const rect1 = obj1.shape;
-        const rect2 = obj2.shape;
-
-        // Calculate the left, right, top, and bottom of each rectangle
-        const left1 = rect1.position.x - rect1.width / 2;
-        const right1 = rect1.position.x + rect1.width / 2;
-        const top1 = rect1.position.y - rect1.height / 2;
-        const bottom1 = rect1.position.y + rect1.height / 2;
-
-        const left2 = rect2.position.x - rect2.width / 2;
-        const right2 = rect2.position.x + rect2.width / 2;
-        const top2 = rect2.position.y - rect2.height / 2;
-        const bottom2 = rect2.position.y + rect2.height / 2;
-
-        // Check for overlap
-        const isColliding = right1 >= left2 &&
-            left1 <= right2 &&
-            bottom1 >= top2 &&
-            top1 <= bottom2;
-
-        if (isColliding) {
-            console.log('true');
-        } else {
-            console.log('false');
         }
     }
 
@@ -148,29 +118,6 @@ export class Collisions {
         }
     }
 
-    detectCollisionPolygonPolygon(obj1, obj2) {
-        const vertices1 = obj1.shape.vertices;
-        const vertices2 = obj2.shape.vertices;
-        let overlap = Number.MAX_VALUE;
-        let normal, axis;
-
-        vector1to2 = obj2.shape.position.clone().subtract(obj1.shape.position);
-
-        const edges1 = this.calculateEdges(vertices1);
-        const axes1 = [];
-        for (let i = 0; i < edges1.length; i++) {
-            axes1.push(edges1.rotatesCCW90().normalize());
-        }
-        //check if axes are not on the back side of rectangle
-        for (let i = 0; i < axes1.length; i++) {
-            if (axes1[i].dot(vector1to2) < 0) {
-                //axes is in the wrong direction, i.e it is on the backside of rectangle
-
-            }
-            //calculate overlap on axes
-        } 
-    }
-
     projectVertices(vertices, axis) {
         let min = vertices[0].dot(axis), max = min;
 
@@ -202,6 +149,86 @@ export class Collisions {
     }
 
 
+    findClosestVertex(vertices, center) {
+        let minDistance = Number.MAX_VALUE;
+        let vertexDistance, closestVertex;
+
+        for (let i = 0; i < vertices.length; i++) {
+            vertexDistance = vertices[i].distanceTo(center);
+            if (vertexDistance < minDistance) {
+                minDistance = vertexDistance;
+                closestVertex = vertices[i];
+            }
+        }
+        renderer.renderedNextFrame.push(closestVertex); //add closest vertex to renderer array
+        return closestVertex;
+    }
+
+
+    detectCollisionPolygonPolygon(obj1, obj2) {
+        const vertices1 = obj1.shape.vertices;
+        const vertices2 = obj2.shape.vertices;
+        let smallestOverlap = Number.MAX_VALUE;
+        let collisionNormal, axis;
+
+        const vector1to2 = obj2.shape.position.clone().subtract(obj1.shape.position);
+
+        const edges1 = this.calculateEdges(vertices1);
+        const axes1 = [];
+
+        for (let i = 0; i < edges1.length; i++) {
+            axes1.push(edges1[i].rotateCCW90().normalize());
+        }
+
+        //check if axes are not on the back side of rectangle
+        for (let i = 0; i < axes1.length; i++) {
+            const axis = axes1[i];
+            if (axis.dot(vector1to2) < 0) {
+                //axes is in the wrong direction, i.e it is on the backside of rectangle
+                continue;
+            }
+
+            //calculate overlap on axis
+            const { overlap, normal } = this.calculateOverlap(vertices1, vertices2, axis);
+
+            if (overlap <= 0) {
+                return; //seperating axis found, no collision
+            } else if (overlap < smallestOverlap) {
+                smallestOverlap = overlap;
+                collisionNormal = normal;
+            }
+        }
+
+        // object 2 edges
+        const vector2to1 = vector1to2.clone().invert();
+        const edges2 = this.calculateEdges(vertices2);
+        const axes2 = [];
+
+        for (let i = 0; i < edges2.length; i++) {
+            axes2.push(edges2[i].rotateCCW90().normalize());
+        }
+        for (let i = 0; i < axes2.length; i++) {
+            const axis = axes2[i];
+            if (axis.dot(vector2to1) < 0) {
+                continue;
+            }
+            const { overlap, normal } = this.calculateOverlap(vertices1, vertices2, axis);
+            if (overlap <= 0) {
+                return;
+            } else if (overlap < smallestOverlap) {
+                smallestOverlap = overlap;
+                collisionNormal = normal;
+            }
+        }
+
+        const normal = this.correctNormalDirection(collisionNormal, obj1, obj2);
+
+        this.collisions.push({
+            collidedPair: [obj1, obj2],
+            overlap: smallestOverlap,
+            normal: normal,     //direction from obj1 to obj2, normal points out of obj1
+        });
+    }
 
     calculateEdges(vertices) {
         const edges = [];
@@ -213,8 +240,30 @@ export class Collisions {
         return edges;
     }
 
-    calculateOverlap() {
+    calculateOverlap(vertices1, vertices2, axis) {
+        const [min1, max1] = this.projectVertices(vertices1, axis);
+        const [min2, max2] = this.projectVertices(vertices2, axis);
 
+        if (min1 >= max2 || min2 >= max1) {
+            return {
+                overlap: 0,
+                normal: null
+            }
+        }
+        return {
+            overlap: Math.min(max2 - min1, max1 - min2),
+            normal: axis.clone(),
+        };
+    }
+
+    correctNormalDirection(normal, obj1, obj2) {
+        const vecO1O2 = obj2.shape.position.clone().subtract(obj1.shape.position);
+        const dot = normal.dot(vecO1O2);
+        if (dot >= 0) {
+            return normal;
+        } else {
+            return normal.invert();
+        }
     }
 
     pushOffObjects(obj1, obj2, overlap, normal) {
@@ -230,20 +279,5 @@ export class Collisions {
             [obj1, obj2] = collidedPair;
             this.pushOffObjects(obj1, obj2, overlap, normal);
         }
-    }
-
-    findClosestVertex(vertices, center) {
-        let minDistance = Number.MAX_VALUE;
-        let vertexDistance, closestVertex;
-
-        for (let i = 0; i < vertices.length; i++) {
-            vertexDistance = vertices[i].distanceTo(center);
-            if (vertexDistance < minDistance) {
-                minDistance = vertexDistance;
-                closestVertex = vertices[i];
-            }
-        }
-        renderer.renderedNextFrame.push(closestVertex); //add closest vertex to renderer array
-        return closestVertex;
     }
 }
