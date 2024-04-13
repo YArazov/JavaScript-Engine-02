@@ -6,6 +6,7 @@ export class Collisions {
     constructor() {
         this.possibleCollisions = [];
         this.collisions = [];
+        this.e = 0.5;   //coesfficient of restitution
     }
 
     clearCollisions() {
@@ -272,12 +273,26 @@ export class Collisions {
 
     }
 
-    resolveCollisions() {
+    bounceOffObject(obj1, obj2, normal) {
+        const relativeVelocity = obj2.velocity.clone().subtract(obj1.velocity);
+        if (relativeVelocity.dot(normal) > 0) {
+            return;  //impossible collission
+        }
+        const j = -relativeVelocity.dot(normal) * (1 + this.e) / (obj1.inverseMass + obj2.inverseMass);
+        console.log(j);
+        const dv1 = j * obj1.inverseMass; // change of
+        const dv2 = j * obj2.inverseMass;
+        obj1.velocity.subtract(normal.clone().multiply(dv1));
+        obj2.velocity.add(normal.clone().multiply(dv2));
+    }
+
+    resolveCollisionsLinear() {
         let collidedPair, overlap, normal, obj1, obj2;
         for (let i = 0; i < this.collisions.length; i++) {
             ({ collidedPair, overlap, normal } = this.collisions[i]);
             [obj1, obj2] = collidedPair;
             this.pushOffObjects(obj1, obj2, overlap, normal);
+            this.bounceOffObject(obj1, obj2, normal)
         }
     }
 }

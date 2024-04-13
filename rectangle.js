@@ -51,6 +51,11 @@ export class Rectangle extends Shape {
         this.aabb.max.y = maxY;
     }
 
+    calculateMass(density) {
+        const area = this.width * this.height;
+        return area * density;
+    }
+
     draw(ctx) {
         ctx.save();
         ctx.translate(this.position.x, this.position.y);

@@ -145,7 +145,15 @@ export class Vec {
 		// Does not mutate the current Vec instance
 		return this.clone().add(direction.clone().multiply(distance));
 	}
+
+	angle() {
+		Math.atan2(this.y, this.x) * 180 / Math.PI;
+	}
 	
+	calculateMass(density) {
+		const area = Math.PI * this.radius * this.radius;
+		return area * density;
+	}
 	draw(ctx, strokeColor = 'black') {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 
 		if (this.color) {
 			ctx.strokeStyle = this.color;

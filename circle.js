@@ -16,6 +16,11 @@ export class Circle extends Shape {
         this.aabb.max = this.position.clone().addX(this.radius).addY(this.radius);
     }
 
+    calculateMass(density) {
+        const area = Math.PI * this.radius * this.radius;
+        return area * density;
+    }
+
     draw(ctx) {
         ctx.beginPath(); // Start a new path for the circle
         ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2); // Draw the circle
