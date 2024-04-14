@@ -28,14 +28,14 @@ export class Collisions {
 
                 if (objects[i].shape instanceof Circle && objects[j].shape instanceof Circle) {
                     this.detectCollisionCircleCircle(objects[i], objects[j]);
-                }  
+                }
                 else if (objects[i].shape instanceof Circle && objects[j].shape instanceof Rectangle) {
                     this.detectCollisionCirclePolygon(objects[i], objects[j]);
-                } 
+                }
                 else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Circle) {
                     this.detectCollisionCirclePolygon(objects[j], objects[i]);
                 }
-                 else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
+                else if (objects[i].shape instanceof Rectangle && objects[j].shape instanceof Rectangle) {
                     this.detectCollisionPolygonPolygon(objects[i], objects[j]);
                 }
             }
@@ -268,18 +268,21 @@ export class Collisions {
     }
 
     pushOffObjects(obj1, obj2, overlap, normal) {
-        obj1.shape.position.subtract(normal.clone().multiply(overlap / 2));
-        obj2.shape.position.add(normal.clone().multiply(overlap / 2));
-
+        if (obj1.isStatic) {
+            obj2.shape.position.add(normal.clone().multiply(overlap));
+        } else if (obj2.isStatic) {
+            obj1.shape.position.subtract(normal.clone().multiply(overlap));
+        } else {
+            obj1.shape.position.subtract(normal.clone().multiply(overlap / 2));
+            obj2.shape.position.add(normal.clone().multiply(overlap / 2));
+        }
     }
 
     bounceOffObject(obj1, obj2, normal) {
         const relativeVelocity = obj2.velocity.clone().subtract(obj1.velocity);
-        if (relativeVelocity.dot(normal) > 0) {
-            return;  //impossible collission
-        }
+        if (relativeVelocity.dot(normal) > 0) return;  //impossible collission
+        
         const j = -relativeVelocity.dot(normal) * (1 + this.e) / (obj1.inverseMass + obj2.inverseMass);
-        console.log(j);
         const dv1 = j * obj1.inverseMass; // change of
         const dv2 = j * obj2.inverseMass;
         obj1.velocity.subtract(normal.clone().multiply(dv1));

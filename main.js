@@ -5,6 +5,8 @@ import { Input } from './input.js';
 import { RigidBody } from './rigidBody.js';
 import { Collisions } from './collisions.js';
 import { Style } from './style.js';
+import { Shape } from './shape.js';
+import { Vec } from './vector.js';
 
 // Setup constants and utility functions
 const SMALLEST_RADIUS = 10;
@@ -22,9 +24,21 @@ export const renderer = new Renderer(canv, ctx);    //export renderer, is in col
 const inp = new Input(canv, window, dt);
 inp.resizeCanvas();
 inp.addListeners();
-
 const col = new Collisions();
 const objects = [];
+//ground object
+addObject(
+    new Rectangle(
+        new Vec(canv.width / 2, canv.width / 1.55), // Center position
+        canv.width * 3,                             // Width
+        canv.height * 0.3,                          // Height
+        new Style('black', 'transparent', 0)        // Style: black border, transparent fill
+    ),
+    true // Set as a static object
+);
+
+
+
 let shapeBeingMade = null;
 //button variables
 let shapeSelected = 'r';
@@ -131,14 +145,11 @@ function moveObjectWithMouse(object) {
     object.velocity.copy(inp.inputs.mouse.velocity);
 }
 
-function addObject(shape) {
-    const object = new RigidBody(shape);
+function addObject(shape, isStatic = false) {
+    const object = new RigidBody(shape, isStatic);
     object.setMass();
     objects.push(object);
 }
-
-    console.log(object.mass, object.inverseMass);
- 
 
 function removeObjects(objectsToRemove) {
     for (let i=0; i<objects.length; i++) {
@@ -149,17 +160,3 @@ function removeObjects(objectsToRemove) {
         }
     }
 }
-
-//1 relative velocity
-const velocityTruckEarth = new Vec (0, 70);
-const velocityEarthTruck = velocityTruckEarth.invert();
-const velocityCarEarth = new Vec (80, 0);
-const velocityCarTruck = velocityCarEarth.add(velocityEarthTruck);
-console.log(velocityCarTruck.magnitude());
-console.log(velocityCarTruck.angle());
-
-//2 coefficient of restitution e
-const bounceHeight = 1100;
-const dropHeight = 1685;
-const e = Math.sqrt(bounceHeight / dropHeight);
-console.log(e);

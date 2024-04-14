@@ -1,41 +1,44 @@
-import {Vec} from './vector.js';
+import { Vec } from './vector.js';
 import { Rectangle } from './rectangle.js';
 
 export class RigidBody {
-	constructor(shape) {
-		this.shape = shape;   
-		this.velocity = new Vec(0, 0);
+    constructor(shape, isStatic = false) {
+        this.shape = shape;
+        this.velocity = new Vec(0, 0);
+        this.angularVelocity = 0;
+        this.mass;
+        this.inverseMass;
+        this.density = 1;
+        this.isStatic = isStatic; // Use isStatic consistently
+    }
 
-		this.angularVelocity = 0.1;
+    updateShape(dt) {
+        if (!this.isStatic) { // Prevent movement updates if static
+            const ds = this.velocity.clone().multiply(dt);  //multiply v * dt = giving you displacement per frame
+            this.shape.position.add(ds);
+            this.shape.orientation += this.angularVelocity * dt;
+        }
 
-		this.mass;
-		this.inverseMass;
-		this.density = 1;
-	}	
+        // Update vertices and aabb of shape if it is a rectangle
+        if (this.shape instanceof Rectangle) {
+            this.shape.updateVertices();
+        }
+        //update aabb
+        this.shape.updateAabb();
+    }
 
-	updateShape(dt) {	//just for rectangle right now
-		const ds = this.velocity.clone().multiply(dt);  //multiply v * dt = giving you displacement per frame
-		this.shape.position.add(ds);
+    setMass() {
+        this.mass = this.shape.calculateMass(this.density);
+        if (this.isStatic) { // Correctly using isStatic
+            this.inverseMass = 0;   // 0 for collisions means that the mass is infinity
+        } else {
+            this.inverseMass = 1 / this.mass;
+        }
+    }
 
-		this.shape.orientation += this.angularVelocity * dt;
-
-		//update vertices and aabb of shape if it is rectangle
-		if (this.shape instanceof Rectangle) {
-			this.shape.updateVertices();
-		}
-		//update aabb
-		this.shape.updateAabb();
-    } 
-
-	setMass() {
-		this.mass = this.shape.calculateMass(this.density);
-		this.inverseMass = 1 / this.mass;
-	}
-
-	checkTooFar (worldSize) {
-		if (this.shape.position.magnitude() > worldSize) {
-			return true;
-		}
-	}
-
+    checkTooFar(worldSize) {
+        if (this.shape.position.magnitude() > worldSize) {
+            return true;
+        }
+    }
 }

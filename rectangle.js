@@ -9,7 +9,6 @@ export class Rectangle extends Shape {
         super(position, style);
         this.width = width;
         this.height = height;
-
         this.orientation = 0;
 
         this.vertices = [new Vec(0, 0), new Vec(0, 0), new Vec(0, 0), new Vec(0, 0)];
