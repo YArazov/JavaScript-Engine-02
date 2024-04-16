@@ -10,10 +10,12 @@ export class RigidBody {
         this.inverseMass;
         this.density = 1;
         this.isStatic = isStatic; // Use isStatic consistently
+		this.accleration = new Vec(0, 0);
     }
 
     updateShape(dt) {
         if (!this.isStatic) { // Prevent movement updates if static
+			const dv
             const ds = this.velocity.clone().multiply(dt);  //multiply v * dt = giving you displacement per frame
             this.shape.position.add(ds);
             this.shape.orientation += this.angularVelocity * dt;
