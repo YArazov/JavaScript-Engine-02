@@ -12,8 +12,8 @@ export class Circle extends Shape {
     }
 
     updateAabb() {
-        this.aabb.min = this.position.clone().subtractX(this.radius).subtractY(this.radius);
-        this.aabb.max = this.position.clone().addX(this.radius).addY(this.radius);
+        this.aabb.min.setX(this.position.x - this.radius).setY(this.position.y - this.radius);
+        this.aabb.max.setX(this.position.x + this.radius).setY(this.position.y + this.radius);
     }
 
     calculateMass(density) {

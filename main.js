@@ -14,7 +14,8 @@ const WORLD_SIZE = 5000;
 const dt = 1 / 60; // Time per frame, for consistent movement and physics calculations
 
 // Assuming Style class is properly imported or defined
-let defaultStyle = new Style('black', 'red', 3); // default style
+let defaultStyle1 = new Style('black', '#f32177', 4); // default style
+let defaultStyle2 = new Style('black', '#2196F3', 4); // default style
 
 const canv = document.getElementById("canvas");
 const ctx = canv.getContext("2d");
@@ -28,16 +29,14 @@ const col = new Collisions();
 const objects = [];
 //ground object
 addObject(
-    new Rectangle(
-        new Vec(canv.width / 2, canv.width / 1.55), // Center position
-        canv.width * 3,                             // Width
-        canv.height * 0.3,                          // Height
-        new Style('black', 'transparent', 0)        // Style: black border, transparent fill
+    new Rectangle (
+        new Vec (canv.width / 2, canv.height),
+        canv.width * 3, 
+        canv.height*0.3,
+        new Style('black', 'transparent', 0),        // Style: black border, transparent fill
     ),
-    true // Set as a static object
+    true    //it is fixed
 );
-
-
 
 let shapeBeingMade = null;
 //button variables
@@ -64,9 +63,9 @@ function updateAndDraw() {
     if (inp.inputs.lclick && shapeBeingMade == null) {
         //make rectangles & circles with mouse
         if (shapeSelected == 'c') {
-            shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, defaultStyle);
+            shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, defaultStyle1);
         } else if (shapeSelected == 'r') {
-            shapeBeingMade = new Rectangle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS * 2, SMALLEST_RADIUS * 2, defaultStyle);
+            shapeBeingMade = new Rectangle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS * 2, SMALLEST_RADIUS * 2, defaultStyle2);
         }
 
     }

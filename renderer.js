@@ -23,7 +23,7 @@ export class Renderer {
         // Assuming each object has a shape with a draw method that handles its own styling
         objects.forEach(object => {
             object.shape.draw(this.ctx); // Draws the shape using its own styling method
-            object.shape.aabb.draw(this.ctx, "red"); // Corrected to use 'object.shape' for AABB drawing
+            object.shape.aabb.draw(this.ctx, "transparent"); // Corrected to use 'object.shape' for AABB drawing
         });
 
         // Draw temporary objects and clear the list afterward
