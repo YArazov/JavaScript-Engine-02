@@ -42,6 +42,7 @@ addObject(
 let shapeBeingMade = null;
 //button variables
 let shapeSelected = 'r';
+let gravitySelected = 2;
 const circleButton = document.getElementById("c");
 const rectButton = document.getElementById("r");
 circleButton.onclick = function () {
@@ -50,6 +51,11 @@ circleButton.onclick = function () {
 rectButton.onclick = function () {
     shapeSelected = 'r';
 };
+//select variables
+const selectGravity = document.getElementById("gravity");
+selectGravity.addEventListener("change", function () {
+    gravitySelected = selectGravity.value;
+})
 
 //MAIN LOOP
 function updateAndDraw() {
@@ -94,27 +100,50 @@ function updateAndDraw() {
         moveObjectWithMouse(inp.inputs.mouse.movedObject);
     }
 
-    //update object positions with velocity
-    for (let i = 0; i < objects.length; i++) {
-        objects[i].updateShape(dt);
+    //set gravity
+    let g = 200;
+    // update g based on input
+    //update g based on input
+    switch (true) {
+        case gravitySelected == 0: g = 0; break;
+        case gravitySelected == 1: g = 20; break;
+        case gravitySelected == 2: g = 200; break;
+        case gravitySelected == 3: g = 2000; break;
     }
 
-    //COLLISIONS
-    col.clearCollisions();
-    col.broadPhazeDetection(objects);
-    // console.log(col.possibleCollisions.length);
-    col.narrowPhaseDetection(objects);  //detect all possible collisions
-    col.resolveCollisionsLinear();    //push off
+    //set pbject accelerations
+    for (let i = 1; i < objects.length; i++) {
+        objects[i].acceleration.zero();
+        objects[i].acceleration.y += g;
+
+    }
+
+    // console.time('collisions');
+    //improve precision
+    const iterations = 20;
+
+    for (let i = 0; i < iterations; i++) {
+
+        for (let i = 0; i < objects.length; i++) {
+            objects[i].updateShape(dt / iterations);
+        }
+
+        //COLLISIONS
+        col.clearCollisions();
+        col.broadPhazeDetection(objects);
+        col.narrowPhaseDetection(objects);  //detect all possible collisions
+        col.resolveCollisionsLinear();    //push off
+    }
 
 
-     //remove objects that are too far
-     const objectsToRemove = [];
-     for (let i=0; i<objects.length; i++) {
-         if (objects[i].checkTooFar(WORLD_SIZE)) {
-             objectsToRemove.push(objects[i]);
-         }
-     }
-     removeObjects(objectsToRemove);
+    //remove objects that are too far
+    const objectsToRemove = [];
+    for (let i = 0; i < objects.length; i++) {
+        if (objects[i].checkTooFar(WORLD_SIZE)) {
+            objectsToRemove.push(objects[i]);
+        }
+    }
+    removeObjects(objectsToRemove);
 
     //draw objects
     renderer.clearFrame();
@@ -152,8 +181,8 @@ function addObject(shape, isStatic = false) {
 }
 
 function removeObjects(objectsToRemove) {
-    for (let i=0; i<objects.length; i++) {
-        for (let j=0; j<objectsToRemove.length; j++) {
+    for (let i = 0; i < objects.length; i++) {
+        for (let j = 0; j < objectsToRemove.length; j++) {
             if (objects[i] == objectsToRemove[j]) {
                 objects.splice(i, 1);
             }

@@ -283,7 +283,7 @@ export class Collisions {
         if (relativeVelocity.dot(normal) > 0) return;  //impossible collission
         
         const j = -relativeVelocity.dot(normal) * (1 + this.e) / (obj1.inverseMass + obj2.inverseMass);
-        const dv1 = j * obj1.inverseMass; // change of
+        const dv1 = j * obj1.inverseMass; // change of velocity for obj 1
         const dv2 = j * obj2.inverseMass;
         obj1.velocity.subtract(normal.clone().multiply(dv1));
         obj2.velocity.add(normal.clone().multiply(dv2));

@@ -21,6 +21,12 @@ export class Vec {
 		return this;
 	}
 
+	zero() {
+		this.x = 0;
+		this.y = 0;
+		return this;
+	}
+
 	add(v) {		//add a vector to this
 		this.x += v.x;
 		this.y += v.y;
@@ -139,7 +145,7 @@ export class Vec {
 		this.add(direction.clone().multiply(distance));
 		return this; // Ensure chainability by returning the instance
 	}
-	
+
 	getMovedDistanceInDirection(distance, direction) {
 		// Returns a new Vec instance that represents the position after moving
 		// Does not mutate the current Vec instance
@@ -149,7 +155,7 @@ export class Vec {
 	angle() {
 		Math.atan2(this.y, this.x) * 180 / Math.PI;
 	}
-	
+
 	calculateMass(density) {
 		const area = Math.PI * this.radius * this.radius;
 		return area * density;
