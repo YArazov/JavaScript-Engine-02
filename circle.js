@@ -21,6 +21,10 @@ export class Circle extends Shape {
         return area * density;
     }
 
+    calculateInertia(mass) {
+        const inertia = 0.5 * mass * this.radius * this.radius;      //formula I = (1/2) * mass * r^2
+        return inertia;
+    }
     draw(ctx) {
         ctx.beginPath(); // Start a new path for the circle
         ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2); // Draw the circle

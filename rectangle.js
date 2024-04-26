@@ -55,6 +55,11 @@ export class Rectangle extends Shape {
         return area * density;
     }
 
+    calculateInertia(mass) {
+        const inertia = 1/12 * mass * (this.width * this.width + this.height * this.height);      //formula I = (1/12) * mass * (h^2 + w^2)
+        return inertia;
+    }
+
     draw(ctx) {
         ctx.save();
         ctx.translate(this.position.x, this.position.y);
