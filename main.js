@@ -20,6 +20,7 @@ let defaultStyle2 = new Style('black', '#2196F3', 4); // default style
 const canv = document.getElementById("canvas");
 const ctx = canv.getContext("2d");
 
+
 export const renderer = new Renderer(canv, ctx);    //export renderer, is in collision
 
 const inp = new Input(canv, window, dt);
