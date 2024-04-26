@@ -151,9 +151,11 @@ function updateAndDraw() {
             col.broadPhazeDetection(objects);
             col.narrowPhaseDetection(objects);                  //detect all possible collisions
             if (collisionMode == 1) {
-                col.resolveCollisionsWithPushOff();                 //push off
+                col.resolveCollisionsWithPushOff();             //push off
             } else if (collisionMode == 2) {
                 col.resolveCollisionsWithPushAndBounceOff();    //bounce off
+            } else if (collisionMode == 3) {
+                col.resolveCollisionsWithPushAndBounceOff();    //Rotate
             }
         }
     }
