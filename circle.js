@@ -9,6 +9,7 @@ export class Circle extends Shape {
         this.radius = radius; // Initialize radius
 
         this.aabb = new Aabb(new Vec(0, 0), new Vec(0, 0));
+        this.orientation = 0;
     }
 
     updateAabb() {

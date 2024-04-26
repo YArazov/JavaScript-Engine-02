@@ -61,10 +61,14 @@ export class Collisions {
         if (distance < circle1.radius + circle2.radius) {   //  finding if the objects touch/overlap, if they do, the collision acts on it
             const overlap = circle1.radius + circle2.radius - distance; //  vector from circle1 to circle2
             const normal = circle2.position.clone().subtract(circle1.position).normalize(); //  dont want to change original vector, so we subtract from a clone() is a unit vector means directon
+
+            const point = circle1.position.clone().add(normal.clone().multiply(circle1.radius - overlap / 2));
+            renderer.renderedNextFrame.push(point);
             this.collisions.push({  //  make a object without a constructor
                 collidedPair: [obj1, obj2], //  make array of objects that are colliding
                 overlap: overlap,
-                normal: normal
+                normal: normal,
+                point: point
             })
         }
     }
@@ -79,6 +83,7 @@ export class Collisions {
         for (let i = 0; i < vertices.length; i++) {
             const v1 = vertices[i];
             const v2 = vertices[(i + 1) % vertices.length];
+            this.findClosestPointSegmant(circleShape.position, v1, v2);
             axis = v2.clone().subtract(v1).rotateCCW90().normalize();
 
             const [min1, max1] = this.projectVertices(vertices, axis);
@@ -110,7 +115,8 @@ export class Collisions {
             if (normal.dot(vec1to2) < 0) {
                 normal.invert();
             }
-
+ 
+            //add collision info
             this.collisions.push({
                 collidedPair: [circle, polygon],
                 overlap: overlap,
@@ -265,6 +271,23 @@ export class Collisions {
         } else {
             return normal.invert();
         }
+    }
+
+    findClosestPointSegmant(point, segmantEndA, SegmantEndB) {  //all variables are vectors
+        const vAB = SegmantEndB.clone().subtract(segmantEndA);
+        const vAP = point.clone().subtract(segmantEndA);
+        const dot = vAB.dot(vAP);
+        const distance = dot / vAB.magnitudeSq();   //dot divided by squared magnitude of vAB
+        let closest;
+        if (distance <= 0) {
+            closest = segmantEndA;
+        } else if (distance >= 1) {
+            closest = SegmantEndB;
+        } else {
+            closest = segmantEndA.clone().add(vAB.multiply(distance)); 
+        }
+        renderer.renderedNextFrame.push(closest);
+        return [closest, point.distanceToSq(closest)];
     }
 
     pushOffObjects(obj1, obj2, overlap, normal) {

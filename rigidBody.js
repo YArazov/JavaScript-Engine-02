@@ -5,7 +5,10 @@ export class RigidBody {
     constructor(shape, isStatic = false) {
         this.shape = shape;
         this.velocity = new Vec(0, 0);
+
+        this.angularAcceleration = 0;
         this.angularVelocity = 0;
+
         this.mass = 0; // Initialize with a default value
         this.inverseMass;
         this.density = 1;
@@ -21,6 +24,8 @@ export class RigidBody {
         this.velocity.add(dv);
         const ds = this.velocity.clone().multiply(dt);  //multiply v * dt = giving you displacement per frame
         this.shape.position.add(ds);
+
+        this.angularVelocity += this.angularAcceleration * dt;
         this.shape.orientation += this.angularVelocity * dt;
 
 

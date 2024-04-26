@@ -117,8 +117,16 @@ export class Vec {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 
+	magnitudeSq() {
+		return this.x * this.x + this.y * this.y;
+	}
+
 	distanceTo(v) {
 		return this.clone().subtract(v).magnitude();
+	}
+
+	distanceToSq(v) {
+		return this.clone().subtract(v).magnitudeSq();
 	}
 
 	dot(v) {
@@ -160,6 +168,7 @@ export class Vec {
 		const area = Math.PI * this.radius * this.radius;
 		return area * density;
 	}
+
 	draw(ctx, strokeColor = 'black') {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 
 		if (this.color) {
 			ctx.strokeStyle = this.color;
