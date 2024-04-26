@@ -115,12 +115,14 @@ export class Collisions {
             if (normal.dot(vec1to2) < 0) {
                 normal.invert();
             }
- 
+            const point = this.findContactPointCirclePolygon(circleShape.position, vertices);
+            renderer.renderedNextFrame.push(point);
             //add collision info
             this.collisions.push({
                 collidedPair: [circle, polygon],
                 overlap: overlap,
                 normal: normal,
+                point: point
             });
         }
     }
@@ -288,6 +290,21 @@ export class Collisions {
         }
         renderer.renderedNextFrame.push(closest);
         return [closest, point.distanceToSq(closest)];
+    }
+
+    findContactPointCirclePolygon(circleCenter, polygonVertices) {
+        let contact, v1, v2;
+        let shortestDistance = Number.MAX_VALUE;
+        for (let i = 0; i < polygonVertices.length; i++) {
+            v1 = polygonVertices[i];
+            v2 = polygonVertices[(i+1) % polygonVertices.length]
+            const info = this.findClosestPointSegmant(circleCenter, v1, v2);
+            if (info[1] < shortestDistance) {
+                contact = info[0];
+                shortestDistance = info[1];
+            }
+        }
+        return contact;
     }
 
     pushOffObjects(obj1, obj2, overlap, normal) {
