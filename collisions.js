@@ -289,7 +289,16 @@ export class Collisions {
         obj2.velocity.add(normal.clone().multiply(dv2));
     }
 
-    resolveCollisionsLinear() {
+    resolveCollisionsWithPushOff() {
+        let collidedPair, overlap, normal, obj1, obj2;
+        for (let i = 0; i < this.collisions.length; i++) {
+            ({ collidedPair, overlap, normal } = this.collisions[i]);
+            [obj1, obj2] = collidedPair;
+            this.pushOffObjects(obj1, obj2, overlap, normal);
+        }
+    }
+
+    resolveCollisionsWithPushAndBounceOff() {
         let collidedPair, overlap, normal, obj1, obj2;
         for (let i = 0; i < this.collisions.length; i++) {
             ({ collidedPair, overlap, normal } = this.collisions[i]);

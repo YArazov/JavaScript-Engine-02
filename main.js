@@ -146,10 +146,16 @@ function updateAndDraw() {
         }
 
         //COLLISIONS
-        col.clearCollisions();
-        col.broadPhazeDetection(objects);
-        col.narrowPhaseDetection(objects);  //detect all possible collisions
-        col.resolveCollisionsLinear();    //push off
+        if (collisionMode != 0) {
+            col.clearCollisions();
+            col.broadPhazeDetection(objects);
+            col.narrowPhaseDetection(objects);                  //detect all possible collisions
+            if (collisionMode == 1) {
+                col.resolveCollisionsWithPushOff();                 //push off
+            } else if (collisionMode == 2) {
+                col.resolveCollisionsWithPushAndBounceOff();    //bounce off
+            }
+        }
     }
 
 
