@@ -28,34 +28,50 @@ inp.resizeCanvas();
 inp.addListeners();
 const col = new Collisions();
 const objects = [];
+
 //ground object
 addObject(
-    new Rectangle (
-        new Vec (canv.width / 2, canv.height),
-        canv.width * 3, 
-        canv.height*0.3,
-        new Style('black', 'transparent', 0),        // Style: black border, transparent fill
+    new Rectangle(
+        new Vec(canv.width / 2, canv.height),
+        canv.width * 3,
+        canv.height * 0.3,
+        new Style('black', 'transparent', 0),
     ),
-    true    //it is fixed
+    true
 );
 
 let shapeBeingMade = null;
 //button variables
 let shapeSelected = 'r';
 let gravitySelected = 2;
+let collisionMode = 2;
+
 const circleButton = document.getElementById("c");
 const rectButton = document.getElementById("r");
+
+setButtonBold(rectButton, true);
+
 circleButton.onclick = function () {
     shapeSelected = 'c';
+    setButtonBold(circleButton, true);
+    setButtonBold(rectButton, false);
 };
 rectButton.onclick = function () {
     shapeSelected = 'r';
+    setButtonBold(circleButton, false);
+    setButtonBold(rectButton, true);
 };
+
 //select variables
 const selectGravity = document.getElementById("gravity");
 selectGravity.addEventListener("change", function () {
     gravitySelected = selectGravity.value;
-})
+});
+
+const selectCollisions = document.getElementById("collisions");
+selectCollisions.addEventListener("change", function () {
+    collisionMode = selectCollisions.value;
+});
 
 //MAIN LOOP
 function updateAndDraw() {
@@ -114,8 +130,9 @@ function updateAndDraw() {
     //set pbject accelerations
     for (let i = 1; i < objects.length; i++) {
         objects[i].acceleration.zero();
-        objects[i].acceleration.y += g;
-
+        if (!objects[i].isStatic) {
+            objects[i].acceleration.y += g;
+        }
     }
 
     // console.time('collisions');
@@ -187,5 +204,13 @@ function removeObjects(objectsToRemove) {
                 objects.splice(i, 1);
             }
         }
+    }
+}
+
+function setButtonBold(button, bool) {
+    if (bool) {
+        button.style.fontWeight = '700';
+    } else {
+        button.style.fontWeight = '400';
     }
 }

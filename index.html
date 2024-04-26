@@ -14,7 +14,6 @@
             <button type="button" id="c">Circle</button>
             <button type="button" id="r">Rectangle</button>
         </div>
-
         <div>
             <select id="gravity">
                 <option value="" disabled>Gravity strength</option>
@@ -24,6 +23,13 @@
                 <option value=3>Strong gravity</option>
             </select>
         </div>
-        <canvas id="canvas"></canvas>
+    </div>
+    <select id="collisions">
+        <option value="" disabled>Collision mode</option>
+        <option value=0>Disabled</option>
+        <option value=1>Push off</option>
+        <option value=2 selected>Bounce off</option>
+    </select>
+    <canvas id="canvas"></canvas>
     </div>
 </body>
