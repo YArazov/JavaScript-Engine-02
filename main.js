@@ -155,7 +155,7 @@ function updateAndDraw() {
             } else if (collisionMode == 2) {
                 col.resolveCollisionsWithPushAndBounceOff();    //bounce off
             } else if (collisionMode == 3) {
-                col.resolveCollisionsWithPushAndBounceOff();    //Rotate
+                col.resolveCollisionsWithRotation();    //Rotate
             }
         }
     }
