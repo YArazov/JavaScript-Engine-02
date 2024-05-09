@@ -34,5 +34,8 @@ export class Circle extends Shape {
         ctx.strokeStyle = this.style.borderColor;
         ctx.lineWidth = this.style.lineWidth;
         ctx.stroke();
+
+        ctx.moveTo(this.position.x, this.position.y);
+        
     }
 }
