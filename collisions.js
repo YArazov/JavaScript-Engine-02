@@ -3,6 +3,7 @@ import { Circle } from "./circle.js";
 import { Rectangle } from "./rectangle.js";
 import { renderer } from "./main.js";
 
+const calc = new Calculations();
 export class Collisions {
     constructor() {
         this.possibleCollisions = [];
@@ -333,7 +334,7 @@ export class Collisions {
 
                 const info = this.findClosestPointSegmant(p, v1, v2);
 
-                if (Calculations.checkNearlyEqual(info[1], minDist) && !info[0].checkNearlyEqual(contact1)) {
+                if (calc.checkNearlyEqual(info[1], minDist) && !info[0].checkNearlyEqual(contact1)) {
                     contact2 = info[0];
                 } else if (info[i] < minDist) {
                     contact1 = info[0];
@@ -350,7 +351,7 @@ export class Collisions {
 
                 const info = this.findClosestPointSegmant(p, v1, v2);
 
-                if (Calculations.checkNearlyEqual(info[1], minDist) && !info[0].checkNearlyEqual(contact1)) {
+                if (calc.checkNearlyEqual(info[1], minDist) && !info[0].checkNearlyEqual(contact1)) {
                     contact2 = info[0];
                 } else if (info[i] < minDist) {
                     contact1 = info[0];
@@ -359,8 +360,8 @@ export class Collisions {
             }
         }
 
-        if (contacts) { //two contacts
-            return Calculations.averageVector(contact1, contact2);
+        if (contact2) { //two contacts
+            return calc.averageVector(contact1, contact2);
         } else {  //one contact
             return contact1;
         }
