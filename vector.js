@@ -3,6 +3,7 @@ export class Vec {
 		this.x = x;
 		this.y = y;
 		this.renderOrigin;
+		this.minimumAmount = 0.05;
 	}
 	//chainable methods
 	copy(v) {	//copy the xy of another vector into this
@@ -167,6 +168,10 @@ export class Vec {
 	calculateMass(density) {
 		const area = Math.PI * this.radius * this.radius;
 		return area * density;
+	}
+
+	checkNearlyEqual(v) {
+		return this.distanceTo(v) < this.minimumAmount;	//return boolean
 	}
 
 	draw(ctx, strokeColor = 'black') {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 

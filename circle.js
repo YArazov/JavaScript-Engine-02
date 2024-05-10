@@ -36,6 +36,10 @@ export class Circle extends Shape {
         ctx.stroke();
 
         ctx.moveTo(this.position.x, this.position.y);
-        
+        ctx.lineTo(
+            this.position.x + this.radius * Math.cos(this.orientation),
+            this.position.y + this.radius * Math.sin(this.orientation),
+        );
+        ctx.stroke();
     }
 }

@@ -1,3 +1,4 @@
+import { Calculations } from "./calculations.js";
 import { Circle } from "./circle.js";
 import { Rectangle } from "./rectangle.js";
 import { renderer } from "./main.js";
@@ -231,11 +232,13 @@ export class Collisions {
         }
 
         const normal = this.correctNormalDirection(collisionNormal, obj1, obj2);
-
+        const point = this.findContactPointPolygons(vertices1, vertices2);
+        renderer.renderedAlways.push(point);
         this.collisions.push({
             collidedPair: [obj1, obj2],
             overlap: smallestOverlap,
             normal: normal,     //direction from obj1 to obj2, normal points out of obj1
+            point: point
         });
     }
 
@@ -286,7 +289,7 @@ export class Collisions {
         } else if (distance >= 1) {
             closest = SegmantEndB;
         } else {
-            closest = segmantEndA.clone().add(vAB.multiply(distance)); 
+            closest = segmantEndA.clone().add(vAB.multiply(distance));
         }
         renderer.renderedNextFrame.push(closest);
         return [closest, point.distanceToSq(closest)];
@@ -297,7 +300,7 @@ export class Collisions {
         let shortestDistance = Number.MAX_VALUE;
         for (let i = 0; i < polygonVertices.length; i++) {
             v1 = polygonVertices[i];
-            v2 = polygonVertices[(i+1) % polygonVertices.length]
+            v2 = polygonVertices[(i + 1) % polygonVertices.length]
             const info = this.findClosestPointSegmant(circleCenter, v1, v2);
             if (info[1] < shortestDistance) {
                 contact = info[0];
@@ -315,6 +318,51 @@ export class Collisions {
         } else {
             obj1.shape.position.subtract(normal.clone().multiply(overlap / 2));
             obj2.shape.position.add(normal.clone().multiply(overlap / 2));
+        }
+    }
+
+    findContactPointPolygons(vertices1, vertices2) {
+        let contact1, contact2, p, v1, v2, minDist;
+        contact2 = null;
+        minDist = Number.MAX_VALUE;
+        for (let i = 0; i < vertices1.length; i++) {
+            p = vertices1[i];
+            for (let j = 0; j < vertices2.length; j++) {
+                v1 = vertices2[j];
+                v2 = vertices2[(j + 1) % vertices2.length];
+
+                const info = this.findClosestPointSegmant(p, v1, v2);
+
+                if (Calculations.checkNearlyEqual(info[1], minDist) && !info[0].checkNearlyEqual(contact1)) {
+                    contact2 = info[0];
+                } else if (info[i] < minDist) {
+                    contact1 = info[0];
+                    minDist = info[1];
+                }
+            }
+        }
+
+        for (let i = 0; i < vertices2.length; i++) {
+            p = vertices1[i];
+            for (let j = 0; j < vertices1.length; j++) {
+                v1 = vertices1[j];
+                v2 = vertices1[(j + 1) % vertices1.length];
+
+                const info = this.findClosestPointSegmant(p, v1, v2);
+
+                if (Calculations.checkNearlyEqual(info[1], minDist) && !info[0].checkNearlyEqual(contact1)) {
+                    contact2 = info[0];
+                } else if (info[i] < minDist) {
+                    contact1 = info[0];
+                    minDist = info[1];
+                }
+            }
+        }
+
+        if (contacts) { //two contacts
+            return Calculations.averageVector(contact1, contact2);
+        } else {  //one contact
+            return contact1;
         }
     }
 
