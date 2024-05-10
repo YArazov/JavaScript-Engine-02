@@ -43,7 +43,6 @@ export class Vec {
 		this.y += y;
 		return this;
 	}
-
 	subtract(v) {
 		this.x -= v.x;
 		this.y -= v.y;
@@ -172,6 +171,14 @@ export class Vec {
 
 	checkNearlyEqual(v) {
 		return this.distanceTo(v) < this.minimumAmount;	//return boolean
+	}
+
+	cross(v) {    //this - vector 1, v - vector 2, == cross(this, v)
+		return (this.x * v.y) - (this.y * v.x);
+	}
+
+	checkNearlyZero() {
+		return this.magnitude() < this.verySmallAmount;
 	}
 
 	draw(ctx, strokeColor = 'black') {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 
