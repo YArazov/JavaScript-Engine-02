@@ -10,6 +10,8 @@ export class Collisions {
         this.possibleCollisions = [];
         this.collisions = [];
         this.e = 0.5;   //coesfficient of restitution
+        this.kf = 0.3;
+        this.sf = 0.5
     }
 
     clearCollisions() {

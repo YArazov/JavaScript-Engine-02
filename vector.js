@@ -43,7 +43,7 @@ export class Vec {
 		this.y += y;
 		return this;
 	}
-	subtract(v) {
+	subtract (v) {
 		this.x -= v.x;
 		this.y -= v.y;
 		return this;
