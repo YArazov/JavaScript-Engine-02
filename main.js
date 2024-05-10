@@ -130,9 +130,8 @@ function updateAndDraw() {
     //set pbject accelerations
     for (let i = 1; i < objects.length; i++) {
         objects[i].acceleration.zero();
-        if (!objects[i].isStatic) {
-            objects[i].acceleration.y += g;
-        }
+        objects[i].acceleration.y += g;
+
     }
 
     // console.time('collisions');

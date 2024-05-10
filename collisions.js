@@ -63,7 +63,7 @@ export class Collisions {
             const normal = circle2.position.clone().subtract(circle1.position).normalize(); //  dont want to change original vector, so we subtract from a clone() is a unit vector means directon
 
             const point = circle1.position.clone().add(normal.clone().multiply(circle1.radius - overlap / 2));
-            renderer.renderedNextFrame.push(point);
+            // renderer.renderedNextFrame.push(point);
             this.collisions.push({  //  make a object without a constructor
                 collidedPair: [obj1, obj2], //  make array of objects that are colliding
                 overlap: overlap,
@@ -116,7 +116,7 @@ export class Collisions {
                 normal.invert();
             }
             const point = this.findContactPointCirclePolygon(circleShape.position, vertices);
-            renderer.renderedNextFrame.push(point);
+            // renderer.renderedNextFrame.push(point);
             //add collision info
             this.collisions.push({
                 collidedPair: [circle, polygon],
