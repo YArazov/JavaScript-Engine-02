@@ -28,7 +28,6 @@ inp.resizeCanvas();
 inp.addListeners();
 const col = new Collisions();
 const objects = [];
-const springs = []; //array for springs
 
 //ground object
 addObject(
@@ -76,8 +75,6 @@ selectCollisions.addEventListener("change", function () {
 
 //MAIN LOOP
 function updateAndDraw() {
-
-    springs.forEach(spring => spring.applyForce());
 
     //make objects
     if (inp.inputs.lclick && shapeBeingMade == null) {
@@ -157,10 +154,9 @@ function updateAndDraw() {
     }
     removeObjects(objectsToRemove);
 
-    //draw objects
-    renderer.clearFrame();
-    renderer.drawFrame(objects);
-    //draw shape
+     // Render the frame
+     renderer.clearFrame();
+     renderer.drawFrame(objects);
     if (shapeBeingMade) {
         shapeBeingMade.draw(ctx); // Style is already assigned to the shape, no need for extra parameters
     }

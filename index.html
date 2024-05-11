@@ -14,6 +14,14 @@
             <button type="button" id="c">Circle</button>
             <button type="button" id="r">Rectangle</button>
         </div>
+        <div id="spring">
+            <button id="createSpring">Create Spring</button>
+        </div>
+        <div id="springProperties" style="display:none;">
+            <select id="springSelect"></select>
+            <input type="number" id="springConstant" placeholder="Spring Constant">
+            <button onclick="setSpringProperties()">Set Properties</button>
+        </div>
         <div>
             <select id="gravity">
                 <option value="" disabled>Gravity strength</option>
@@ -28,7 +36,7 @@
         <option value="" disabled>Collision mode</option>
         <option value=0>Disabled</option>
         <option value=1>Push off</option>
-        <option value=2 >Push and Bounce off</option>
+        <option value=2>Push and Bounce off</option>
         <option value=3 selected>Bounce off and Rotate</option>
     </select>
     <canvas id="canvas"></canvas>
