@@ -18,8 +18,6 @@ export class Renderer {
     }
 
     drawFrame(objects) {
-        this.clearFrame();
-    
         // Assuming each object has a shape with a draw method that handles its own styling
         objects.forEach(object => {
             object.shape.draw(this.ctx); // Draws the shape using its own styling method
