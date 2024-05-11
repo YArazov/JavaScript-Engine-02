@@ -102,7 +102,7 @@ export class Collisions {
                 normal = axis;
             }
         }
-
+     
         const closestVertex = this.findClosestVertex(vertices, circleShape.position);
         axis = closestVertex.clone().subtract(circleShape.position).normalize();
 
@@ -121,7 +121,7 @@ export class Collisions {
                 normal.invert();
             }
             const point = this.findContactPointCirclePolygon(circleShape.position, vertices);
-            // renderer.renderedNextFrame.push(point);
+            renderer.renderedNextFrame.push(point);
             //add collision info
             this.collisions.push({
                 collidedPair: [circle, polygon],
@@ -174,7 +174,7 @@ export class Collisions {
                 closestVertex = vertices[i];
             }
         }
-        renderer.renderedNextFrame.push(closestVertex); //add closest vertex to renderer array
+        // renderer.renderedNextFrame.push(closestVertex); //add closest vertex to renderer array
         return closestVertex;
     }
 
@@ -237,13 +237,14 @@ export class Collisions {
 
         const normal = this.correctNormalDirection(collisionNormal, obj1, obj2);
         const point = this.findContactPointPolygons(vertices1, vertices2);
-        renderer.renderedAlways.push(point);
+
         this.collisions.push({
             collidedPair: [obj1, obj2],
             overlap: smallestOverlap,
             normal: normal,     //direction from obj1 to obj2, normal points out of obj1
             point: point
         });
+        
     }
 
     calculateEdges(vertices) {
@@ -363,10 +364,11 @@ export class Collisions {
         }
 
         if (contact2) { //two contacts
-            return calc.averageVector(contact1, contact2);
+            return calc.averageVector([contact1, contact2]);
         } else {  //one contact
             return contact1;
         }
+
     }
 
     bounceOffObject(obj1, obj2, normal) {
@@ -381,10 +383,10 @@ export class Collisions {
     }
 
     bounceOffAndRotateObjects(o1, o2, normal, point) {
+      
         //linear v from rotation at contact = r vectors from objects to contact points, rotated perp, multiplied by angVel 
         const r1 = point.clone().subtract(o1.shape.position);
         const r2 = point.clone().subtract(o2.shape.position);
-
         const r1Perp = r1.clone().rotateCW90();
         const r2Perp = r2.clone().rotateCW90();
         const v1 = r1Perp.clone().multiply(o1.angularVelocity);
@@ -473,17 +475,19 @@ export class Collisions {
             ({ collidedPair, overlap, normal } = this.collisions[i]);
             [obj1, obj2] = collidedPair;
             this.pushOffObjects(obj1, obj2, overlap, normal);
-            this.bounceOffObject(obj1, obj2, normal)
+            this.bounceOffObject(obj1, obj2, normal);
         }
     }
 
     resolveCollisionsWithRotation() {
+       
         let collidedPair, overlap, normal, obj1, obj2, point;
+        
         for (let i = 0; i < this.collisions.length; i++) {
             ({ collidedPair, overlap, normal, point } = this.collisions[i]);
             [obj1, obj2] = collidedPair;
             this.pushOffObjects(obj1, obj2, overlap, normal);
-            const j = this.bounceOffAndRotateObjects(obj1, obj2, normal, point)
+            const j = this.bounceOffAndRotateObjects(obj1, obj2, normal, point);
             this.addFriction(obj1, obj2, normal, point, j);
         }
     }

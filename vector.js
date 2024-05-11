@@ -178,7 +178,7 @@ export class Vec {
 	}
 
 	checkNearlyZero() {
-		return this.magnitude() < this.verySmallAmount;
+		return this.magnitude() < this.minimumAmount;
 	}
 
 	draw(ctx, strokeColor = 'black') {	// TO DO rename all draws to Vector draw, circle draw, rectangle draw, etc for readability 
