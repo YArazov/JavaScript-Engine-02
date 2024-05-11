@@ -119,7 +119,7 @@ function updateAndDraw() {
         moveObjectWithMouse(inp.inputs.mouse.movedObject);
     }
 
-    const gravityLevels = [0, 20, 200, 2000];  // Corresponding to gravity options 0-3
+    const gravityLevels = [0, 20, 50, 500];  // Corresponding to gravity options 0-3
 
     // Inside your updateAndDraw:
     let g = gravityLevels[gravitySelected];  // Directly use selected gravity level
@@ -164,7 +164,9 @@ function updateAndDraw() {
     if (shapeBeingMade) {
         shapeBeingMade.draw(ctx); // Style is already assigned to the shape, no need for extra parameters
     }
+    requestAnimationFrame(updateAndDraw);
 }
+requestAnimationFrame(updateAndDraw);
 
 function applyPhysicsUpdates() {
     objects.forEach(obj => {
@@ -182,8 +184,9 @@ function handleCollisions() {
         else if (collisionMode == 2) col.resolveCollisionsWithPushAndBounceOff();
         else if (collisionMode == 3) col.resolveCollisionsWithRotation();
     }
+    
 }
-let renderInterval = setInterval(updateAndDraw, 1000 / 60);
+
 
 function findClosestObject(objects, vector) {
     let closestObject = null;
