@@ -14,13 +14,14 @@ export class RigidBody {
         this.angularAcceleration = 0;
         this.angularVelocity = 0;
 
+        this.position = this.shape.position;
         this.mass = 0; // Initialize with a default value
         this.inverseMass;
         this.density = 1;
         this.isStatic = isStatic; // Use consistently
 
-        this.inertia;
-        this.inverseInertia;
+        this.inertia = 0;
+        this.inverseInertia = 0;
     }
 
     updateShape(dt) {

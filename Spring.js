@@ -9,11 +9,13 @@ export class Spring {
     }
 
     applyForce() {
+        console.log("Object A position:", this.objectA.position);
+        console.log("Object B position:", this.objectB.position);
+        console.log(`Applying force: Positions A: ${this.objectA.position}, B: ${this.objectB.position}`);
         if (!this.objectA.position || !this.objectB.position) {
             console.error("Undefined position detected", this.objectA, this.objectB);
-            return;  // Abort force application if positions are undefined
+            return; // Abort force application if positions are undefined
         }
-    
         let distanceVec = this.objectB.position.subtract(this.objectA.position);
         let distance = distanceVec.magnitude();
         let extension = distance - this.restLength;

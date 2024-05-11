@@ -74,6 +74,17 @@ selectCollisions.addEventListener("change", function () {
     collisionMode = selectCollisions.value;
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('canvas');
+    canvas.addEventListener('click', function (event) {
+        const rect = canvas.getBoundingClientRect();  // Get canvas size and position
+        const x = event.clientX - rect.left;  // Adjust for canvas position
+        const y = event.clientY - rect.top;
+        const position = new Vec(x, y);
+        const newRigidBody = new RigidBody(new Shape(position), false);
+        console.log("New RigidBody created with position:", newRigidBody.shape.position);
+    });
+});
 
 let springMode = false;
 let defaultRestLength;
@@ -176,20 +187,6 @@ function updateAndDraw() {
     // Apply physics updates
     applyPhysicsUpdates();
 
-    // console.time('collisions');
-    //improve precision
-    const iterations = 20;
-
-    for (let i = 0; i < iterations; i++) {
-
-        for (let i = 0; i < objects.length; i++) {
-            objects[i].updateShape(dt / iterations);
-        }
-
-        // Collision handling based on the selected mode
-        handleCollisions();
-    }
-
     //remove objects that are too far
     const objectsToRemove = [];
     for (let i = 0; i < objects.length; i++) {
@@ -199,53 +196,51 @@ function updateAndDraw() {
     }
     removeObjects(objectsToRemove);
 
-    // Clear the canvas
-    ctx.clearRect(0, 0, canv.width, canv.height);
-
-    // Draw all springs
-    springs.forEach(spring => spring.draw(ctx));
-    
     // Render objects
     renderer.clearFrame();
     renderer.drawFrame(objects);
 
-    // Draw springs
+    // Draw all springs and objects once after updates
     springs.forEach(spring => {
-        spring.draw(ctx); // Make sure your Spring class's draw method correctly represents the spring
+        spring.applyForce();  // Apply spring forces right before drawing
+        spring.draw(ctx);     // Draw each spring
     });
 
     if (shapeBeingMade) {
         shapeBeingMade.draw(ctx); // Style is already assigned to the shape, no need for extra parameters
     }
+
     requestAnimationFrame(updateAndDraw);
 }
 requestAnimationFrame(updateAndDraw);
+
 
 function applyPhysicsUpdates() {
     objects.forEach(obj => {
         obj.updateShape(dt);
         obj.shape.updateAabb();
-        // Spring force application
-        springs.forEach(spring => {
-            if (!spring.objectA.position || !spring.objectB.position) {
-                console.error("Position undefined before applying force", spring.objectA, spring.objectB);
-                return;
-            }
-            spring.applyForce();
-        });
     });
+
+    handleCollisions();  // Move collision handling here for better flow and efficiency
 }
 
 function handleCollisions() {
-    if (collisionMode != 0) {
+    if (collisionMode !== 0) {
         col.clearCollisions();
         col.broadPhaseDetection(objects);
         col.narrowPhaseDetection(objects);
-        if (collisionMode == 1) col.resolveCollisionsWithPushOff();
-        else if (collisionMode == 2) col.resolveCollisionsWithPushAndBounceOff();
-        else if (collisionMode == 3) col.resolveCollisionsWithRotation();
+        switch (collisionMode) {
+            case 1:
+                col.resolveCollisionsWithPushOff();
+                break;
+            case 2:
+                col.resolveCollisionsWithPushAndBounceOff();
+                break;
+            case 3:
+                col.resolveCollisionsWithRotation();
+                break;
+        }
     }
-
 }
 
 

@@ -48,11 +48,9 @@ export class Vec {
 		this.y += y;
 		return this;
 	}
-	subtract (v) {
-		this.x -= v.x;
-		this.y -= v.y;
-		return this;
-	}
+	subtract(other) {
+        return new Vec(this.x - other.x, this.y - other.y);
+    }
 
 	subtractX(x) {
 		this.x -= x;
@@ -166,7 +164,7 @@ export class Vec {
 	}
 
 	angle() {
-		Math.atan2(this.y, this.x) * 180 / Math.PI;
+		return Math.atan2(this.y, this.x) * 180 / Math.PI;
 	}
 
 	calculateMass(density) {
