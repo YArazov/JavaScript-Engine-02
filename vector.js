@@ -29,10 +29,15 @@ export class Vec {
 	}
 
 	add(v) {		//add a vector to this
+		if (!v) {
+            console.error("Attempted to add undefined Vec");
+            return;
+		}
 		this.x += v.x;
 		this.y += v.y;
 		return this;
 	}
+	
 
 	addX(x) {	//scalar addition
 		this.x += x;

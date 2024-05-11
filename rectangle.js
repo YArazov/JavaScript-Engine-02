@@ -6,7 +6,12 @@ import { Vec } from './vector.js';
 
 export class Rectangle extends Shape {
     constructor(position, width, height, style = new Style()) {
+        if (!shape || !shape.position) {
+            console.error("Invalid shape or position during RigidBody creation", shape);
+            throw new Error("Shape and position must be defined");
+        }
         super(position, style);
+        
         this.width = width;
         this.height = height;
         this.orientation = 0;

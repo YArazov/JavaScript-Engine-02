@@ -179,12 +179,18 @@ export class Collisions {
     }
 
 
-    detectCollisionPolygonPolygon(obj1, obj2) {
+     // Additional changes might be necessary in methods that call this one:
+     detectCollisionPolygonPolygon(obj1, obj2) {
+        // Ensure all vectors are properly initialized before usage
+        // Example safeguard
+        if (!obj1.shape || !obj2.shape || !obj1.shape.position || !obj2.shape.position) {
+            console.error('Object shapes or positions are undefined');
+            return; // Exit the function if critical information is missing
+        }
         const vertices1 = obj1.shape.vertices;
         const vertices2 = obj2.shape.vertices;
         let smallestOverlap = Number.MAX_VALUE;
         let collisionNormal, axis;
-
         const vector1to2 = obj2.shape.position.clone().subtract(obj1.shape.position);
 
         const edges1 = this.calculateEdges(vertices1);
@@ -193,6 +199,7 @@ export class Collisions {
         for (let i = 0; i < edges1.length; i++) {
             axes1.push(edges1[i].rotateCCW90().normalize());
         }
+
 
         //check if axes are not on the back side of rectangle
         for (let i = 0; i < axes1.length; i++) {
@@ -274,6 +281,11 @@ export class Collisions {
     }
 
     correctNormalDirection(normal, obj1, obj2) {
+        if (!normal || !obj1.shape.position || !obj2.shape.position) {
+            console.error('Invalid vector operation due to undefined vectors');
+            return normal; // Or handle this case as appropriate
+        }
+
         const vecO1O2 = obj2.shape.position.clone().subtract(obj1.shape.position);
         const dot = normal.dot(vecO1O2);
         if (dot >= 0) {

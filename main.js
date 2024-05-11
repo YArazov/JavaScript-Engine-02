@@ -4,6 +4,7 @@ import { Rectangle } from './rectangle.js';
 import { Input } from './input.js';
 import { RigidBody } from './rigidBody.js';
 import { Collisions } from './collisions.js';
+import { Spring } from './Spring.js';
 import { Style } from './style.js';
 import { Shape } from './shape.js';
 import { Vec } from './vector.js';
@@ -28,7 +29,7 @@ inp.resizeCanvas();
 inp.addListeners();
 const col = new Collisions();
 const objects = [];
-
+const springs = [];
 //ground object
 addObject(
     new Rectangle(
@@ -73,8 +74,51 @@ selectCollisions.addEventListener("change", function () {
     collisionMode = selectCollisions.value;
 });
 
+
+let springMode = false;
+let defaultRestLength;
+let defaultStiffness;
+let currentSpringObject = null;
+
+document.getElementById('toggleSpringMode').addEventListener('click', () => {
+    springMode = !springMode;
+    if (!springMode) {
+        currentSpringObject = null; // Reset when leaving spring mode
+    }
+});
+
+canvas.addEventListener('mousedown', event => {
+    if (springMode && event.button === 2) {  // Right-click in spring mode
+        const clickedObject = findClosestObject(objects, new Vec(event.clientX, event.clientY));
+        if (currentSpringObject && clickedObject && currentSpringObject !== clickedObject) {
+            // Directly use default values or ensure they are defined
+            const restLength = defaultRestLength || 100;  // Use 100 if defaultRestLength is undefined
+            const stiffness = defaultStiffness || 5;      // Use 5 if defaultStiffness is undefined
+
+            const newSpring = new Spring(currentSpringObject, clickedObject, restLength, stiffness);
+            springs.push(newSpring);
+            console.log('New spring added:', newSpring); // This should now show correctly initialized spring
+
+            currentSpringObject = null; // Reset after attaching spring
+        } else {
+            currentSpringObject = clickedObject;
+            console.log('Current spring object selected:', currentSpringObject); // Debug which object is selected
+        }
+    }
+});
+
+
+
+
+
 //MAIN LOOP
 function updateAndDraw() {
+
+    console.log("Updating simulation state");
+    springs.forEach(spring => {
+        console.log("Applying force", spring);
+        spring.applyForce();
+    });
 
     //make objects
     if (inp.inputs.lclick && shapeBeingMade == null) {
@@ -128,7 +172,8 @@ function updateAndDraw() {
 
     }
 
-     // Apply physics updates
+
+    // Apply physics updates
     applyPhysicsUpdates();
 
     // console.time('collisions');
@@ -154,9 +199,21 @@ function updateAndDraw() {
     }
     removeObjects(objectsToRemove);
 
-     // Render the frame
-     renderer.clearFrame();
-     renderer.drawFrame(objects);
+    // Clear the canvas
+    ctx.clearRect(0, 0, canv.width, canv.height);
+
+    // Draw all springs
+    springs.forEach(spring => spring.draw(ctx));
+    
+    // Render objects
+    renderer.clearFrame();
+    renderer.drawFrame(objects);
+
+    // Draw springs
+    springs.forEach(spring => {
+        spring.draw(ctx); // Make sure your Spring class's draw method correctly represents the spring
+    });
+
     if (shapeBeingMade) {
         shapeBeingMade.draw(ctx); // Style is already assigned to the shape, no need for extra parameters
     }
@@ -168,6 +225,14 @@ function applyPhysicsUpdates() {
     objects.forEach(obj => {
         obj.updateShape(dt);
         obj.shape.updateAabb();
+        // Spring force application
+        springs.forEach(spring => {
+            if (!spring.objectA.position || !spring.objectB.position) {
+                console.error("Position undefined before applying force", spring.objectA, spring.objectB);
+                return;
+            }
+            spring.applyForce();
+        });
     });
 }
 
@@ -180,21 +245,20 @@ function handleCollisions() {
         else if (collisionMode == 2) col.resolveCollisionsWithPushAndBounceOff();
         else if (collisionMode == 3) col.resolveCollisionsWithRotation();
     }
-    
+
 }
 
 
 function findClosestObject(objects, vector) {
     let closestObject = null;
-    let distance;
-    let lowestDistance = 30;
-    for (let i = 0; i < objects.length; i++) {
-        distance = objects[i].shape.position.distanceTo(vector);
-        if (distance < lowestDistance) {
-            lowestDistance = distance;
-            closestObject = objects[i];
+    let minDistance = Infinity;
+    objects.forEach(obj => {
+        let distance = obj.shape.position.distanceTo(vector);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestObject = obj;
         }
-    }
+    });
     return closestObject;
 }
 

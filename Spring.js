@@ -1,26 +1,37 @@
 export class Spring {
     constructor(objectA, objectB, restLength, stiffness) {
-        this.obj1 = objectA;       //objects it's interacting with
-        this.obj2 = objectB;    
-        this.restL = restLength;    //equilibrium
-        this.k = stiffness; //spring constant
+        console.log("Creating Spring:", {objectA, objectB, restLength, stiffness});
+
+        this.objectA = objectA;
+        this.objectB = objectB;
+        this.restLength = restLength;
+        this.stiffness = stiffness;
     }
 
-    applyForce() {  //apply force exerted by the spring on the two connected objects
-        let distVec = this.obj2.shape.position.clone().subtract(this.obj1.shape.position);  //distance between two obj
-        let dist = distVec.magnitude(); //magnitude of dist
-        let forceMag = this.k * (dist - this.restL);    //dist is current distance between two obj, d - l determines whether it is tensile or compressive force
-        let force = distVec.normalize().multiply(forceMag); //normalize force, force applied to obj1 in direction of obj2, equal & opposite reaction
-
-        this.obj1.applyForce(force);
-        this.obj2.applyForce(force.invert());
+    applyForce() {
+        if (!this.objectA.position || !this.objectB.position) {
+            console.error("Undefined position detected", this.objectA, this.objectB);
+            return;  // Abort force application if positions are undefined
+        }
+    
+        let distanceVec = this.objectB.position.subtract(this.objectA.position);
+        let distance = distanceVec.magnitude();
+        let extension = distance - this.restLength;
+        let forceMagnitude = -this.stiffness * extension; // Hooke's Law: F = -kx
+        let force = distanceVec.normalize().multiply(forceMagnitude);
+    
+        this.objectA.applyForce(force);
+        this.objectB.applyForce(force.multiply(-1)); // Apply equal and opposite force
     }
-
-    draw(ctx) { //draw method
+    
+    draw(ctx) {
+        if (!this.objectA.position || !this.objectB.position) {
+            return; // Do not attempt to draw if positions are undefined
+        }
         ctx.beginPath();
-        ctx.moveTo(this.obj1.shape.position.x, this.obj1.shape.position.y);
-        ctx.lineTo(this.obj2.shape.position.x, this.obj2.shape.position.y);
-        ctx.strokeStyle = 'grey';
+        ctx.moveTo(this.objectA.position.x, this.objectA.position.y);
+        ctx.lineTo(this.objectB.position.x, this.objectB.position.y);
+        ctx.strokeStyle = 'red';
         ctx.stroke();
     }
 }

@@ -3,8 +3,13 @@ import { Rectangle } from './rectangle.js';
 
 export class RigidBody {
     constructor(shape, isStatic = false) {
+        if (!shape || !shape.position) {
+            console.error("Invalid shape or position during RigidBody creation", shape);
+            throw new Error("Shape and position must be defined");
+        }
         this.shape = shape;
         this.velocity = new Vec(0, 0);
+        this.acceleration = new Vec(0, 0);
 
         this.angularAcceleration = 0;
         this.angularVelocity = 0;
@@ -13,7 +18,7 @@ export class RigidBody {
         this.inverseMass;
         this.density = 1;
         this.isStatic = isStatic; // Use consistently
-        this.acceleration = new Vec(0, 0);
+
         this.inertia;
         this.inverseInertia;
     }
