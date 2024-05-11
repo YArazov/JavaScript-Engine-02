@@ -10,4 +10,9 @@ export class Shape {
         throw new Error('Subclasses must implement their own draw method.');
     }
 
+     // Define a default calculateMass method, possibly overridden
+     calculateMass(density) {
+        throw new Error('calculateMass method not implemented');
+    }
+
 }

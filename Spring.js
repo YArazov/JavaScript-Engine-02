@@ -22,14 +22,20 @@ export class Spring {
             return; // Abort force application if positions are undefined
         }
         let distanceVec = this.objectB.position.subtract(this.objectA.position);
-        let distance = distanceVec.magnitude();
-        let extension = distance - this.restLength;
-        let forceMagnitude = -this.stiffness * extension; // Hooke's Law: F = -kx
-        let force = distanceVec.normalize().multiply(forceMagnitude);
-    
-        this.objectA.applyForce(force);
-        this.objectB.applyForce(force.multiply(-1)); // Apply equal and opposite force
-    }
+    let distance = distanceVec.magnitude();
+    let extension = distance - this.restLength;
+    let forceMagnitude = -this.stiffness * extension; // Hooke's Law: F = -kx
+
+    // Damping (simple linear damping)
+    let dampingFactor = 0.1; // Adjust this value as needed
+    let relativeVelocity = this.objectB.velocity.subtract(this.objectA.velocity);
+    let dampingForce = relativeVelocity.multiply(dampingFactor);
+
+    let force = distanceVec.normalize().multiply(forceMagnitude).subtract(dampingForce);
+
+    this.objectA.applyForce(force);
+    this.objectB.applyForce(force.multiply(-1)); // Apply equal and opposite force
+}
     
     draw(ctx) {
         if (!this.objectA.position || !this.objectB.position) {
