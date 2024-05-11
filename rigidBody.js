@@ -43,6 +43,13 @@ export class RigidBody {
         this.shape.updateAabb();
     }
 
+    applyForce(force) {
+        if (this.isStatic) return;  // No effect on static bodies
+
+        // F = m * a, so a = F / m (but we use acceleration directly here for simplicity)
+        this.acceleration.add(force.divide(this.mass));
+    }
+
     setMass() {
         this.mass = this.shape.calculateMass(this.density);
         this.inertia = this.shape.calculateMass(this.mass);
