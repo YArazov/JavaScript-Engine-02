@@ -28,6 +28,7 @@ inp.resizeCanvas();
 inp.addListeners();
 const col = new Collisions();
 const objects = [];
+const springs = []; //array for springs
 
 //ground object
 addObject(
@@ -49,7 +50,7 @@ let collisionMode = 3;
 const circleButton = document.getElementById("c");
 const rectButton = document.getElementById("r");
 
-setButtonBold(rectButton, true);
+setButtonBold(rectButton, true);    //rect button starts as bold
 
 circleButton.onclick = function () {
     shapeSelected = 'c';
@@ -116,16 +117,10 @@ function updateAndDraw() {
         moveObjectWithMouse(inp.inputs.mouse.movedObject);
     }
 
-    //set gravity
-    let g = 200;
-    // update g based on input
-    //update g based on input
-    switch (true) {
-        case gravitySelected == 0: g = 0; break;
-        case gravitySelected == 1: g = 20; break;
-        case gravitySelected == 2: g = 200; break;
-        case gravitySelected == 3: g = 2000; break;
-    }
+    const gravityLevels = [0, 20, 200, 2000];  // Corresponding to gravity options 0-3
+
+    // Inside your updateAndDraw:
+    let g = gravityLevels[gravitySelected];  // Directly use selected gravity level
 
     //set pbject accelerations
     for (let i = 1; i < objects.length; i++) {
@@ -147,7 +142,7 @@ function updateAndDraw() {
         //COLLISIONS
         if (collisionMode != 0) {
             col.clearCollisions();
-            col.broadPhazeDetection(objects);
+            col.broadPhaseDetection(objects);
             col.narrowPhaseDetection(objects);                  //detect all possible collisions
             if (collisionMode == 1) {
                 col.resolveCollisionsWithPushOff();             //push off
