@@ -2,10 +2,11 @@ import {Vec} from './vector.js';
 import {Aabb} from './aabb.js';
 
 export class Circle {
-	constructor(pos, r) {
+	constructor(pos, r, material) {
 		this.position = pos
 		this.radius = r;
         this.orientation = 0;
+        this.material = material;
         this.aabb = new Aabb(new Vec(0,0),new Vec(0,0));
 	}
     
@@ -24,24 +25,24 @@ export class Circle {
         return inertia;
     }
 
-	draw(ctx, strokeColor, fillColor) {
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI*2, true);
-        ctx.closePath();
-        if (fillColor) {
-            ctx.fillStyle = fillColor;
-            ctx.fill();
-        }
-        ctx.strokeStyle = strokeColor;
-        ctx.lineWidth = 3;
-        ctx.stroke();
+draw(ctx, strokeColor) {
+    ctx.beginPath();
+    ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI*2, true);
+    ctx.closePath();
 
-        ctx.moveTo(this.position.x, this.position.y);
-        ctx.lineTo(
-            this.position.x + this.radius * Math.cos(this.orientation),
-            this.position.y + this.radius * Math.sin(this.orientation),
-        );
-        ctx.stroke();
+    ctx.fillStyle = this.material.fillColor;
+    ctx.fill();
 
-    }
+    ctx.strokeStyle = strokeColor || this.material.fillColor;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.moveTo(this.position.x, this.position.y);
+    ctx.lineTo(
+        this.position.x + this.radius * Math.cos(this.orientation),
+        this.position.y + this.radius * Math.sin(this.orientation),
+    );
+    ctx.stroke();
+}
+
 }	

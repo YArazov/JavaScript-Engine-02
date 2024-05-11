@@ -2,10 +2,11 @@ import {Vec} from './vector.js';
 import {Aabb} from './aabb.js';
 
 export class Rect {
-	constructor(pos, w, h) {
+	constructor(pos, w, h, material) {
 		this.position = pos;
 		this.width = w;
 		this.height = h;
+        this.material = material;
 
         this.orientation = 0;
 
@@ -58,28 +59,19 @@ export class Rect {
         return inertia;
     }
 
-	draw(ctx, strokeColor, fillColor) {
-        ctx.save();
-        ctx.translate(this.position.x, this.position.y);
-        ctx.rotate(this.orientation);
-        if (fillColor) {
-            ctx.fillStyle = fillColor;
-            ctx.fillRect(
-                - this.width/2,
-                - this.height/2,
-                this.width,
-                this.height,
-            );
-        }
-        ctx.strokeStyle = strokeColor;
-        ctx.lineWidth = 3;
-       	ctx.strokeRect(
-            - this.width/2,
-            - this.height/2,
-            this.width,
-            this.height,
-        );
-        ctx.restore();
-    }
+draw(ctx, strokeColor) {
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    ctx.rotate(this.orientation);
+
+    ctx.fillStyle = this.material.fillColor;
+    ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+
+    ctx.strokeStyle = strokeColor || this.material.fillColor;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
+    ctx.restore();
+}
+
 
 }
