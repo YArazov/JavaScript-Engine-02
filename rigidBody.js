@@ -51,8 +51,6 @@ export class RigidBody {
     }
 
     checkTooFar(worldSize) {
-        if (this.shape.position.magnitude() > worldSize) {
-            return true;
-        }
+        return this.shape.position.magnitude() > worldSize;
     }
 }

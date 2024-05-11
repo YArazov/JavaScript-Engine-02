@@ -77,6 +77,8 @@ selectCollisions.addEventListener("change", function () {
 //MAIN LOOP
 function updateAndDraw() {
 
+    springs.forEach(spring => spring.applyForce());
+
     //make objects
     if (inp.inputs.lclick && shapeBeingMade == null) {
         //make rectangles & circles with mouse
@@ -122,12 +124,15 @@ function updateAndDraw() {
     // Inside your updateAndDraw:
     let g = gravityLevels[gravitySelected];  // Directly use selected gravity level
 
-    //set pbject accelerations
+    //set object accelerations
     for (let i = 1; i < objects.length; i++) {
         objects[i].acceleration.zero();
         objects[i].acceleration.y += g;
 
     }
+
+     // Apply physics updates
+    applyPhysicsUpdates();
 
     // console.time('collisions');
     //improve precision
@@ -139,21 +144,9 @@ function updateAndDraw() {
             objects[i].updateShape(dt / iterations);
         }
 
-        //COLLISIONS
-        if (collisionMode != 0) {
-            col.clearCollisions();
-            col.broadPhaseDetection(objects);
-            col.narrowPhaseDetection(objects);                  //detect all possible collisions
-            if (collisionMode == 1) {
-                col.resolveCollisionsWithPushOff();             //push off
-            } else if (collisionMode == 2) {
-                col.resolveCollisionsWithPushAndBounceOff();    //bounce off
-            } else if (collisionMode == 3) {
-                col.resolveCollisionsWithRotation();    //Rotate
-            }
-        }
+        // Collision handling based on the selected mode
+        handleCollisions();
     }
-
 
     //remove objects that are too far
     const objectsToRemove = [];
@@ -170,6 +163,24 @@ function updateAndDraw() {
     //draw shape
     if (shapeBeingMade) {
         shapeBeingMade.draw(ctx); // Style is already assigned to the shape, no need for extra parameters
+    }
+}
+
+function applyPhysicsUpdates() {
+    objects.forEach(obj => {
+        obj.updateShape(dt);
+        obj.shape.updateAabb();
+    });
+}
+
+function handleCollisions() {
+    if (collisionMode != 0) {
+        col.clearCollisions();
+        col.broadPhaseDetection(objects);
+        col.narrowPhaseDetection(objects);
+        if (collisionMode == 1) col.resolveCollisionsWithPushOff();
+        else if (collisionMode == 2) col.resolveCollisionsWithPushAndBounceOff();
+        else if (collisionMode == 3) col.resolveCollisionsWithRotation();
     }
 }
 let renderInterval = setInterval(updateAndDraw, 1000 / 60);
