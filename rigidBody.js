@@ -47,7 +47,7 @@ export class RigidBody {
         if (this.isStatic) return;  // No effect on static bodies
 
         // F = m * a, so a = F / m (but we use acceleration directly here for simplicity)
-        this.acceleration.add(force.divide(this.mass));
+        this.acceleration.add(force.clone().divide(this.mass)); //clone force otherwise the second object will have reduced acceleration
     }
 
     setMass() {

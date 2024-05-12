@@ -87,18 +87,22 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 let springMode = false;
-let defaultRestLength = 30;
-let defaultStiffness = 1000;
+let defaultRestLength = 100;
+let defaultStiffness = 3000;
 let currentSpringObject = null;
 
-document.getElementById('toggleSpringMode').addEventListener('click', () => {
+const springButton = document.getElementById('toggleSpringMode');
+springButton.addEventListener('click', () => {
     springMode = !springMode;
     if (!springMode) {
         currentSpringObject = null; // Reset when leaving spring mode
+        setButtonBold(springButton, false);
+    } else {
+        setButtonBold(springButton, true);
     }
 });
 
-canvas.addEventListener('mousedown', event => {
+canv.addEventListener('mousedown', event => {
     if (springMode && event.button === 2) {  // Right-click in spring mode
         const clickedObject = findClosestObject(objects, new Vec(event.clientX, event.clientY));
         if (currentSpringObject && clickedObject && currentSpringObject !== clickedObject) {
@@ -125,11 +129,7 @@ canvas.addEventListener('mousedown', event => {
 //MAIN LOOP
 function updateAndDraw() {
 
-    console.log("Updating simulation state");
-    springs.forEach(spring => {
-        console.log("Applying force", spring);
-        spring.applyForce();
-    });
+    
 
     //make objects
     if (inp.inputs.lclick && shapeBeingMade == null) {
@@ -178,11 +178,15 @@ function updateAndDraw() {
 
     //set object accelerations
     for (let i = 1; i < objects.length; i++) {
-        objects[i].acceleration.zero();
+        objects[i].acceleration.zero(); //ZERO ACCELERATION
         objects[i].acceleration.y += g;
 
     }
 
+    springs.forEach(spring => {
+        console.log("Applying force", spring);
+        spring.applyForce();
+    });
 
     // Apply physics updates
     applyPhysicsUpdates();
