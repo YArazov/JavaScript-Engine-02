@@ -14,8 +14,19 @@ const canv = document.getElementById("canvas");
 const ctx = canv.getContext("2d");
 
 export const renderer = new Renderer(canv, ctx);
-const fillCol = "darkGray";
-const bordCol = "black";
+let fillCol = "black";
+let bordCol = "Grey";
+let backroundCol = "white";
+let basketball = "Basketball.svg";
+let football = "football.svg";
+let tennisball = "Tennisball.svg";
+let baseball = "Baseball.svg";
+let volleyball = "Volleyball.svg";
+let smile = "Smile.svg"
+let pizza = "Pizza.svg"
+
+
+
 
 const col = new Collisions();
 
@@ -25,12 +36,14 @@ inp.resizeCanvas();
 inp.addListeners();
 
 const objects = [];
-//ground object
+
 addObject(
     new Rect (
         new Vec (canv.width / 2, canv.height),
         3*canv.width, 
-        canv.height*0.7
+        canv.height*0.7,
+        fillCol,
+        bordCol
     ),
     true    //it is fixed
 );
@@ -40,10 +53,26 @@ let shapeBeingMade = null;
 let shapeSelected = 'r';
 let gravitySelected = 2;
 let colMode = 2;
+let imageSelected = basketball;
+
+// const iButton = document.getElementById("i");
+// const iSelected = document.getElementById("Images");
+
+
+// iButton.addEventListener("click", function() {
+//    iSelected.style.display = iSelected.style.display === "block" ? "none" : "block";
+//   });
+
+
+
 
 //button variables
 const circleButton = document.getElementById("c");
 const rectButton = document.getElementById("r");
+const imageButton = document.getElementById("i");
+imageButton.onclick = function() {
+    shapeSelected = 'i';
+};
 circleButton.onclick = function() {
     shapeSelected = 'c';
 };
@@ -60,17 +89,104 @@ const selectCollisions = document.getElementById("collisions");
 selectCollisions.addEventListener("change", function () {
     colMode = selectCollisions.value;
 });
+ 
+document.getElementById('Images').addEventListener("change", function () {
+    
+    updateImage();
+});
+
+function updateImage() {
+     imageSelected = document.getElementById("Images").value;
+    switch (imageSelected) {
+        case "smile":
+            imageSelected = smile;
+            break;
+        case "basketbal":
+            imageSelected = basketball;
+            break;
+        case "football":
+            imageSelected = football;
+            break;
+        case "tennisball":
+            imageSelected = tennisball;
+            break;
+        case "baseball":
+            imageSelected = baseball;
+            break;
+        case "volleyball":
+            imageSelected = volleyball;
+            break;
+        case "pizza":
+            imageSelected = pizza;
+            break;
+s
+    }
+}
+
+
+
+
+document.getElementById('colors').addEventListener("change", function () {
+    
+    updateColors();
+});
+
+document.getElementById('color-type').addEventListener("change", function () {
+    updateColors();
+});
+function updateColors() {
+    const colorSelected = document.getElementById("colors").value;
+    const colorTypeSelected = document.getElementById("color-type").value;
+
+    switch (colorTypeSelected) {
+        case "fill": 
+            fillCol = colorSelected; 
+            break;
+        case "border":
+            bordCol = colorSelected; 
+            break;
+        case "groundObj":
+            objects[0].shape.fillCol = colorSelected;
+            break;
+        case "backround": 
+            backroundCol = colorSelected;
+            canv.style.backgroundColor = backroundCol; 
+            break;
+    }
+}
 
 //MAIN LOOP
 function updateAndDraw() {
+    
+   ctx.clearRect(0, 0, canv.width, canv.height);
+   ctx.fillStyle = backroundCol;
+    ctx.fillRect(0, 0, canv.width, canv.height);
 
+  
+    for(let i=0; i<objects.length; i++) {
+        objects[i].shape.draw(ctx, fillCol, bordCol);
+    }
+
+    
+ 
     //make objects
     if (inp.inputs.lclick && shapeBeingMade == null) {
         //lesson 03 - make rectangles with mouse
         if (shapeSelected == 'c') {
-            shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, 0);
+            shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, fillCol, bordCol);
+        }
+        else if (shapeSelected == 'i') {
+            shapeBeingMade = new Circle(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS, fillCol, bordCol);
+
+            //if we are in circle mode we want to create an image object and assign 
+            //it to currently selected image
+
+         let circleImg = new Image();
+            circleImg.src = imageSelected;
+            shapeBeingMade.image = circleImg;
+
         } else if (shapeSelected == 'r') {
-            shapeBeingMade = new Rect(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS*2, SMALLEST_RADIUS*2);
+            shapeBeingMade = new Rect(inp.inputs.mouse.position.clone(), SMALLEST_RADIUS*2, SMALLEST_RADIUS*2, fillCol, bordCol);
         }
         
     }
@@ -119,7 +235,7 @@ function updateAndDraw() {
         objects[i].acceleration.zero();
         objects[i].acceleration.y += g;
     }
-
+   
     // console.time('collisions');
     //improve precision
     const iterations = 20;
@@ -128,6 +244,7 @@ function updateAndDraw() {
 
         for(let i=0; i<objects.length; i++) {
             objects[i].updateShape(dt / iterations);
+            
         }
 
         //COLLISIONS
@@ -167,7 +284,19 @@ function updateAndDraw() {
     }
 
 }
-let renderInterval = setInterval(updateAndDraw, 1000 / 60);
+// //do a promise and load images, then call promise.then{interval}
+
+let circleImg = new Image();
+
+circleImg.src = basketball; // Default to BasketballBlack.svg
+
+
+Promise.all([
+ new Promise((resolve) => { circleImg.onload = resolve; }),
+    
+]).then(() => {
+    let renderInterval = setInterval(updateAndDraw, 1000 / 60);
+});
 
 function findClosestObject(objects, vector) {
     let closestObject = null;
@@ -189,9 +318,11 @@ function moveObjectWithMouse(object) {
 }
 
 function addObject(shape, fixed=false) {
-    const object = new RigidBody(shape, fixed);
-    object.setMass();  
-    objects.push(object);
+    
+        const object = new RigidBody(shape, fixed);
+        object.setMass();
+        objects.push(object);
+   
 } 
 
 function removeObjects(objectsToRemove) {
@@ -203,4 +334,3 @@ function removeObjects(objectsToRemove) {
         }
     }
 }
-

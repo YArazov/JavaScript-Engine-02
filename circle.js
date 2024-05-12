@@ -2,11 +2,15 @@ import {Vec} from './vector.js';
 import {Aabb} from './aabb.js';
 
 export class Circle {
-	constructor(pos, r) {
+	constructor(pos, r, fillCol, bordCol, circleImg) {
 		this.position = pos
 		this.radius = r;
         this.orientation = 0;
         this.aabb = new Aabb(new Vec(0,0),new Vec(0,0));
+        this.fillCol = fillCol;
+        this.bordCol = bordCol;
+        this.image = circleImg;
+        
 	}
     
     updateAabb() {
@@ -24,24 +28,44 @@ export class Circle {
         return inertia;
     }
 
-	draw(ctx, strokeColor, fillColor) {
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI*2, true);
-        ctx.closePath();
-        if (fillColor) {
-            ctx.fillStyle = fillColor;
-            ctx.fill();
+	draw(ctx) { 
+        if(this.image) {
+
+
+            ctx.drawImage(this.image, this.position.x - this.radius, this.position.y - this.radius, this.radius * 2, this.radius * 2);
+            //use ctx.drawImage (learn from ai code)
+
+        } else{
+            ctx.save();
+            ctx.beginPath();  
+            ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI*2, true);
+            ctx.closePath(); 
+        
+            // if (fillCol) {
+                ctx.fillStyle = this.fillCol;
+                ctx.fill();
+            // }
+        
+            // if (bordCol) {
+                ctx.strokeStyle = this.bordCol;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            // }
+        
+        
+            ctx.beginPath();
+            ctx.moveTo(this.position.x, this.position.y);
+            ctx.lineTo(
+                this.position.x + this.radius * Math.cos(this.orientation),
+                this.position.y + this.radius * Math.sin(this.orientation),
+            );
+            ctx.stroke();
+            ctx.closePath();  
+            ctx.restore();
         }
-        ctx.strokeStyle = strokeColor;
-        ctx.lineWidth = 3;
-        ctx.stroke();
-
-        ctx.moveTo(this.position.x, this.position.y);
-        ctx.lineTo(
-            this.position.x + this.radius * Math.cos(this.orientation),
-            this.position.y + this.radius * Math.sin(this.orientation),
-        );
-        ctx.stroke();
-
     }
+    
+    //In circle.js make attribute image= .svg
+    //Change the draw method of circle to draw an image if the circle has attribute image
+    
 }	

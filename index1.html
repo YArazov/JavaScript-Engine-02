@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG to Canvas Animation</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        //xconst ctx = canvas.getContext('2d');
+
+        // Load SVG images
+        const circleImg = new Image();
+        circleImg.src = 'Basketball.svg';
+        
+// Wait for images to load
+        Promise.all([
+            new Promise((resolve) => { circleImg.onload = resolve; }),
+            
+        ]).then(() => {
+            // Draw the images onto the canvas
+            ctx.drawImage(circleImg, 100, 50); //use radius, 2*radius
+           
+
+            // Example animation: move rectangle
+            let x = 200;
+            let y = 200;
+            
+
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(circleImg, 200, 50, 50, 20); //200, 50 - x and y, 20, 20 - width and height
+                
+            }
+
+            animate();
+        });
+    </script>
+</body>
+</html>
