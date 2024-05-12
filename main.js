@@ -104,7 +104,7 @@ canvas.addEventListener('mousedown', event => {
         if (currentSpringObject && clickedObject && currentSpringObject !== clickedObject) {
             // Directly use default values or ensure they are defined
             const restLength = defaultRestLength || 100;  // Use 100 if defaultRestLength is undefined
-            const stiffness = 200;      // Use 5 if defaultStiffness is undefined
+            const stiffness = 5;      // Use 5 if defaultStiffness is undefined
 
             const newSpring = new Spring(currentSpringObject, clickedObject, restLength, stiffness);
             springs.push(newSpring);

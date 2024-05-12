@@ -6,7 +6,7 @@ export class Spring {
 
         this.objectA = objectA;
         this.objectB = objectB;
-        this.restLength = restLength;
+        this.restLength = restLength;   // Hooke's Law: F = -kx
         this.stiffness = stiffness;
     }
 
@@ -21,7 +21,8 @@ export class Spring {
             console.error("Undefined position detected", this.objectA, this.objectB);
             return; // Abort force application if positions are undefined
         }
-        let distanceVec = this.objectB.position.subtract(this.objectA.position);
+    
+    let distanceVec = this.objectB.position.subtract(this.objectA.position);
     let distance = distanceVec.magnitude();
     let extension = distance - this.restLength;
     let forceMagnitude = -this.stiffness * extension; // Hooke's Law: F = -kx
