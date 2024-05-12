@@ -87,8 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 let springMode = false;
-let defaultRestLength;
-let defaultStiffness;
+let defaultRestLength = 30;
+let defaultStiffness = 1000;
 let currentSpringObject = null;
 
 document.getElementById('toggleSpringMode').addEventListener('click', () => {
