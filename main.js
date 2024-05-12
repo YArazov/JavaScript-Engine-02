@@ -45,7 +45,7 @@ let shapeBeingMade = null;
 //button variables
 let shapeSelected = 'r';
 let gravitySelected = 2;
-let collisionMode = 3;
+let collisionMode = "3";
 
 const circleButton = document.getElementById("c");
 const rectButton = document.getElementById("r");
@@ -234,13 +234,13 @@ function handleCollisions() {
         col.broadPhaseDetection(objects);
         col.narrowPhaseDetection(objects);
         switch (collisionMode) {
-            case 1:
+            case "1":
                 col.resolveCollisionsWithPushOff();
                 break;
-            case 2:
+            case "2":
                 col.resolveCollisionsWithPushAndBounceOff();
                 break;
-            case 3:
+            case "3":
                 col.resolveCollisionsWithRotation();
                 break;
         }
