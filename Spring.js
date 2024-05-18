@@ -11,10 +11,10 @@ export class Spring {
     }
 
     applyForce() {
-        console.log('Is objectA a RigidBody?', this.objectA instanceof RigidBody); // Corrected
-        console.log('Is objectB a RigidBody?', this.objectB instanceof RigidBody); // Corrected
-        console.log("Object A position:", this.objectA.position); // Corrected
-        console.log("Object B position:", this.objectB.position); // Corrected
+        console.log('Is objectA a RigidBody?', this.objectA instanceof RigidBody); 
+        console.log('Is objectB a RigidBody?', this.objectB instanceof RigidBody); 
+        console.log("Object A position:", this.objectA.position); 
+        console.log("Object B position:", this.objectB.position); 
         console.log(`Applying force: Positions A: ${this.objectA.position}, B: ${this.objectB.position}`);
         
         if (!this.objectA.position || !this.objectB.position) {
